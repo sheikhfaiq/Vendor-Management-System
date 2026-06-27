@@ -1,0 +1,134 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+}
+
+enum VendorType {
+  INDIVIDUAL
+  COMPANY
+}
+
+enum VendorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ScopeOfWork {
+  DESIGN_ENGINEERING
+  SUPPLY
+  INSTALLATION
+  TESTING_COMMISSIONING
+}
+
+model User {
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  password            String
+  role                Role                 @default(VENDOR)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  vendorProfile       VendorProfile?
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  activityLogs        ActivityLog[]
+}
+
+model VendorProfile {
+  id                String          @id @default(uuid())
+  userId            String          @unique
+  user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendorType        VendorType      @default(COMPANY)
+  companyName       String? // Required only if COMPANY
+  tradeLicenseNo    String? // Required only if COMPANY
+  taxRegistrationNo String? // Required only if COMPANY
+  ownerName         String
+  phone             String
+  website           String?
+  address           String
+  city              String
+  country           String
+  status            VendorStatus    @default(PENDING)
+  profileCompletion Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  services          VendorService[]
+}
+
+model MainCategory {
+  id         String     @id @default(uuid())
+  name       String     @unique
+  categories Category[]
+}
+
+model Category {
+  id             String         @id @default(uuid())
+  name           String
+  mainCategoryId String
+  mainCategory   MainCategory   @relation(fields: [mainCategoryId], references: [id], onDelete: Cascade)
+  subCategories  SubCategory[]
+
+  @@unique([name, mainCategoryId])
+}
+
+model SubCategory {
+  id             String          @id @default(uuid())
+  name           String
+  categoryId     String
+  category       Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  vendorServices VendorService[]
+
+  @@unique([name, categoryId])
+}
+
+model VendorService {
+  id              String          @id @default(uuid())
+  vendorProfileId String
+  vendorProfile   VendorProfile   @relation(fields: [vendorProfileId], references: [id], onDelete: Cascade)
+  subCategoryId   String
+  subCategory     SubCategory     @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
+  scopes          ScopeOfWork[]
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([vendorProfileId, subCategoryId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  details   String?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
