@@ -123,7 +123,7 @@ const SignupComponent: React.FC = () => {
             label="Email Address"
             placeholder="john@company.com"
             error={errors.email?.message}
-            icon={useMemo(() => <Mail className="h-4 w-4" />, [])}
+            icon={<Mail className="h-4 w-4" />}
           />
           <Input
             {...register('password')}
@@ -131,7 +131,7 @@ const SignupComponent: React.FC = () => {
             label="Password"
             placeholder="••••••••"
             error={errors.password?.message}
-            icon={useMemo(() => <Lock className="h-4 w-4" />, [])}
+            icon={<Lock className="h-4 w-4" />}
           />
           <Select
             {...register('vendorType')}
@@ -149,7 +149,7 @@ const SignupComponent: React.FC = () => {
             label="Contact Person / Owner"
             placeholder="John Doe"
             error={errors.ownerName?.message}
-            icon={useMemo(() => <UserIcon className="h-4 w-4" />, [])}
+            icon={<UserIcon className="h-4 w-4" />}
           />
           <Input
             {...register('phone')}
@@ -157,7 +157,7 @@ const SignupComponent: React.FC = () => {
             label="Phone Number"
             placeholder="+123456789"
             error={errors.phone?.message}
-            icon={useMemo(() => <Phone className="h-4 w-4" />, [])}
+            icon={<Phone className="h-4 w-4" />}
           />
           <Input
             {...register('website')}
@@ -165,7 +165,7 @@ const SignupComponent: React.FC = () => {
             label="Website (Optional)"
             placeholder="https://company.com"
             error={errors.website?.message}
-            icon={useMemo(() => <Globe className="h-4 w-4" />, [])}
+            icon={<Globe className="h-4 w-4" />}
           />
         </div>
 
@@ -179,7 +179,7 @@ const SignupComponent: React.FC = () => {
                 label="Company Name"
                 placeholder="Construct LLC"
                 error={errors.companyName?.message}
-                icon={useMemo(() => <Building className="h-4 w-4" />, [])}
+                icon={<Building className="h-4 w-4" />}
               />
               <Input
                 {...register('tradeLicenseNo')}
@@ -207,7 +207,7 @@ const SignupComponent: React.FC = () => {
             label="Address"
             placeholder="Building 45, High Street"
             error={errors.address?.message}
-            icon={useMemo(() => <MapPin className="h-4 w-4" />, [])}
+            icon={<MapPin className="h-4 w-4" />}
           />
           <Input
             {...register('city')}
