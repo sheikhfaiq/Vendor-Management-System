@@ -326,7 +326,7 @@ const ManageUsersComponent: React.FC = () => {
                           <div className="border-t border-slate-100 pt-2.5 flex items-start gap-1">
                             <MapPin className="h-3.5 w-3.5 text-slate-450 shrink-0 mt-0.5" />
                             <span className="text-slate-500 font-medium">
-                              {vendorDetails.address}, {vendorDetails.city}, {vendorDetails.country}
+                              {[vendorDetails.address, vendorDetails.city, vendorDetails.region, vendorDetails.country].filter(Boolean).join(', ')}
                             </span>
                           </div>
                         </div>

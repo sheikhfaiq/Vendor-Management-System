@@ -10,6 +10,7 @@ export const updateProfileSchema = z.object({
   website: z.string().url('Invalid website URL').optional().or(z.literal('').or(z.null())),
   address: z.string().min(5, 'Address must be at least 5 characters').optional(),
   city: z.string().min(2, 'City must be at least 2 characters').optional(),
+  region: z.string().min(2, 'Region must be at least 2 characters').optional().or(z.null()),
   country: z.string().min(2, 'Country must be at least 2 characters').optional(),
   businessCategory: z.string().optional(),
 });

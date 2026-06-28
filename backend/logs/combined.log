@@ -351,3 +351,25 @@
 {"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile 200 9.509 ms - 521","timestamp":"2026-06-28 11:59:24"}
 {"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile/completion 200 9.133 ms - 227","timestamp":"2026-06-28 11:59:24"}
 {"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:01:50"}
+{"level":"info","message":"::1 - POST /auth/login 200 245.511 ms - 690","timestamp":"2026-06-28 12:07:37"}
+{"level":"info","message":"::1 - GET /admin/dashboard 200 122.504 ms - 194","timestamp":"2026-06-28 12:07:37"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=5 200 116.833 ms - 1557","timestamp":"2026-06-28 12:07:37"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 200 126.573 ms - 3084","timestamp":"2026-06-28 12:07:37"}
+{"level":"info","message":"::1 - POST /auth/signup 201 71.336 ms - 703","timestamp":"2026-06-28 12:10:57"}
+{"level":"info","message":"::1 - POST /auth/login 200 68.625 ms - 1144","timestamp":"2026-06-28 12:11:09"}
+{"level":"info","message":"::1 - GET /vendors/dashboard 200 10.473 ms - 1028","timestamp":"2026-06-28 12:11:09"}
+{"level":"info","message":"::1 - GET /vendors/profile/completion 200 10.976 ms - 227","timestamp":"2026-06-28 12:11:09"}
+{"level":"info","message":"::1 - GET /vendors/profile 200 4.100 ms - 537","timestamp":"2026-06-28 12:11:18"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:15:52"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:16:04"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:17:09"}
+{"level":"info","message":"::1 - GET /vendors/profile 200 71.559 ms - 551","timestamp":"2026-06-28 12:17:36"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=5 200 103.279 ms - 1887","timestamp":"2026-06-28 12:17:36"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 200 108.689 ms - 3080","timestamp":"2026-06-28 12:17:36"}
+{"level":"info","message":"::1 - GET /admin/dashboard 200 166.318 ms - 194","timestamp":"2026-06-28 12:17:36"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 201 138.634 ms - 710","timestamp":"2026-06-28 12:19:15"}
+{"level":"error","message":"API Error: Email address is already in use","stack":"Error: Email address is already in use\n    at AuthService.signupVendor (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.service.ts:14:13)\n    at signup (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.controller.ts:9:20)","timestamp":"2026-06-28 12:19:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 400 39.792 ms - 73","timestamp":"2026-06-28 12:19:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/login 200 87.302 ms - 1151","timestamp":"2026-06-28 12:19:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile 200 8.889 ms - 535","timestamp":"2026-06-28 12:19:15"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile/completion 200 10.505 ms - 236","timestamp":"2026-06-28 12:19:15"}

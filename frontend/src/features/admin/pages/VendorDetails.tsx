@@ -167,7 +167,7 @@ const VendorDetailsComponent: React.FC = () => {
                 <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Onboarding Address</span>
                 <span>
                   {vendor.address
-                    ? `${vendor.address}, ${vendor.city}, ${vendor.country}`
+                    ? [vendor.address, vendor.city, vendor.region, vendor.country].filter(Boolean).join(', ')
                     : 'N/A'}
                 </span>
               </div>

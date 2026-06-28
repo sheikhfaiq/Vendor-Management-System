@@ -3,6 +3,7 @@ export const calculateProfileCompletion = (profile: {
   ownerName?: string | null;
   phone?: string | null;
   address?: string | null;
+  region?: string | null;
   city?: string | null;
   country?: string | null;
   companyName?: string | null;
@@ -16,6 +17,7 @@ export const calculateProfileCompletion = (profile: {
   if (profile.ownerName && profile.ownerName.trim().length >= 2) score += 10;
   if (profile.phone && profile.phone.trim().length >= 8) score += 10;
   if (profile.address && profile.address.trim().length >= 5) score += 10;
+  if (profile.region && profile.region.trim().length >= 2) score += 10;
   if (profile.city && profile.city.trim().length >= 2) score += 10;
   if (profile.country && profile.country.trim().length >= 2) score += 10;
 
@@ -24,8 +26,8 @@ export const calculateProfileCompletion = (profile: {
     if (profile.tradeLicenseNo && profile.tradeLicenseNo.trim().length > 0) score += 10;
     if (profile.taxRegistrationNo && profile.taxRegistrationNo.trim().length > 0) score += 10;
   } else {
-    // For individual, adjust the 5 basic fields from 50% to 80% (1.6 multiplier)
-    score = score * 1.6;
+    // For individual, adjust the 6 basic fields from 60% to 80% (~1.333 multiplier)
+    score = score * 1.333;
   }
 
   // Round it to avoid floats
@@ -44,6 +46,7 @@ export const getMissingProfileFields = (profile: {
   ownerName?: string | null;
   phone?: string | null;
   address?: string | null;
+  region?: string | null;
   city?: string | null;
   country?: string | null;
   companyName?: string | null;
@@ -56,6 +59,7 @@ export const getMissingProfileFields = (profile: {
   if (!profile.ownerName || profile.ownerName.trim().length < 2) missing.push('ownerName');
   if (!profile.phone || profile.phone.trim().length < 8) missing.push('phone');
   if (!profile.address || profile.address.trim().length < 5) missing.push('address');
+  if (!profile.region || profile.region.trim().length < 2) missing.push('region');
   if (!profile.city || profile.city.trim().length < 2) missing.push('city');
   if (!profile.country || profile.country.trim().length < 2) missing.push('country');
 

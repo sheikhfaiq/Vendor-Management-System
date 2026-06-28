@@ -29,6 +29,7 @@ export interface VendorProfile {
   website: string | null;
   address: string | null;
   city: string | null;
+  region: string | null;
   country: string | null;
   businessCategory: string | null;
   status: VendorStatus;

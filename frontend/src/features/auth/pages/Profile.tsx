@@ -121,7 +121,12 @@ const ProfileComponent: React.FC = () => {
               <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Registered Address</span>
               <span>
                 {user.vendorProfile.address
-                  ? `${user.vendorProfile.address}, ${user.vendorProfile.city}, ${user.vendorProfile.country}`
+                  ? [
+                      user.vendorProfile.address,
+                      user.vendorProfile.city,
+                      user.vendorProfile.region,
+                      user.vendorProfile.country
+                    ].filter(Boolean).join(', ')
                   : 'N/A'}
               </span>
             </div>

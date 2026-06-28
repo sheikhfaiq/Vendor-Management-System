@@ -210,7 +210,9 @@ const VendorListComponent: React.FC = () => {
         render: (row: any) => (
           <div>
             <span className="block text-xs font-semibold">{row.phone}</span>
-            <span className="text-xxs text-slate-400 font-semibold">{row.city}, {row.country}</span>
+            <span className="text-xxs text-slate-400 font-semibold">
+              {[row.city, row.region, row.country].filter(Boolean).join(', ')}
+            </span>
           </div>
         ),
       },

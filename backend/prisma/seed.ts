@@ -10,6 +10,7 @@ const getProfileCompletion = (profile: {
   phone: string;
   address: string;
   city: string;
+  region?: string | null;
   country: string;
   companyName?: string | null;
   tradeLicenseNo?: string | null;
@@ -21,6 +22,7 @@ const getProfileCompletion = (profile: {
   if (profile.ownerName.trim().length >= 2) score += 10;
   if (profile.phone.trim().length >= 8) score += 10;
   if (profile.address.trim().length >= 5) score += 10;
+  if (profile.region && profile.region.trim().length >= 2) score += 10;
   if (profile.city.trim().length >= 2) score += 10;
   if (profile.country.trim().length >= 2) score += 10;
 
@@ -29,7 +31,7 @@ const getProfileCompletion = (profile: {
     if (profile.tradeLicenseNo && profile.tradeLicenseNo.trim().length > 0) score += 10;
     if (profile.taxRegistrationNo && profile.taxRegistrationNo.trim().length > 0) score += 10;
   } else {
-    score = score * 1.6;
+    score = score * 1.333;
   }
 
   score = Math.round(score);
@@ -693,6 +695,7 @@ async function main() {
         phone: vData.phone,
         address: vData.address,
         city: vData.city,
+        region: (vData as any).region || null,
         country: vData.country,
         status: vData.status,
         profileCompletion: completion,

@@ -9,7 +9,7 @@ import { Checkbox } from '../../../components/Checkbox/Checkbox';
 import { Card } from '../../../components/Card/Card';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
-import { Plus, Trash2, Edit, ChevronRight, FolderOpen, Layers, X } from 'lucide-react';
+import { Plus, ChevronRight, FolderOpen, Layers, X } from 'lucide-react';
 import type { ScopeOfWork, MainCategory, Category, SubCategory } from '../../../types';
 
 const ALL_SCOPES: { value: ScopeOfWork; label: string }[] = [
@@ -300,30 +300,8 @@ const MyServicesComponent: React.FC = () => {
           </div>
         ),
       },
-      {
-        key: 'actions',
-        label: 'Actions',
-        render: (row: any) => (
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => openEditModal(row)}
-              className="p-1 text-slate-400 hover:text-slate-600 transition-colors"
-              title="Edit Scopes"
-            >
-              <Edit className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => openDeleteModal(row)}
-              className="p-1 text-slate-400 hover:text-red-600 transition-colors"
-              title="Delete Trade"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </div>
-        ),
-      },
     ],
-    [openEditModal, openDeleteModal]
+    []
   );
 
   // =================== RENDER ===================
