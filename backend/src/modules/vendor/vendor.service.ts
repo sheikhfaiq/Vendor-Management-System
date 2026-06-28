@@ -4,6 +4,7 @@ import { authRepository } from '../auth/auth.repository';
 import { calculateProfileCompletion, getMissingProfileFields } from '../../utils/profileCompletion';
 import { AppError } from '../../middleware/error.middleware';
 import { ScopeOfWork } from '@prisma/client';
+import { storageService } from '../../utils/storage.service';
 
 export class VendorService {
   async getProfileByUserId(userId: string) {
@@ -215,6 +216,83 @@ export class VendorService {
       completion: profile.profileCompletion,
       missingFields,
     };
+  }
+
+  async getDocuments(userId: string) {
+    const profile = await this.getProfileByUserId(userId);
+    const documents = await vendorRepository.getDocumentsByProfileId(profile.id);
+    
+    // Dynamically generate download/view URL for each document
+    return Promise.all(
+      documents.map(async (doc) => ({
+        ...doc,
+        fileUrl: await storageService.generateDownloadUrl(doc.fileKey),
+      }))
+    );
+  }
+
+  async generateUploadUrl(userId: string, fileName: string, mimeType: string) {
+    const profile = await this.getProfileByUserId(userId);
+    return storageService.generateUploadUrl(fileName, mimeType, profile.id);
+  }
+
+  async confirmUpload(
+    userId: string,
+    data: { name: string; fileKey: string; fileUrl: string; fileSize: number; mimeType: string },
+    ip?: string,
+    userAgent?: string
+  ) {
+    const profile = await this.getProfileByUserId(userId);
+    
+    const document = await vendorRepository.addDocument(
+      profile.id,
+      data.name,
+      data.fileKey,
+      data.fileUrl,
+      data.fileSize,
+      data.mimeType
+    );
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_DOCUMENT_UPLOAD',
+      `Uploaded document: ${data.name}`,
+      ip,
+      userAgent
+    );
+
+    return document;
+  }
+
+  async deleteDocument(userId: string, documentId: string, ip?: string, userAgent?: string) {
+    const profile = await this.getProfileByUserId(userId);
+    const document = await vendorRepository.getDocumentById(documentId);
+
+    if (!document) {
+      throw new AppError('Document not found', 404);
+    }
+
+    if (document.vendorProfileId !== profile.id) {
+      throw new AppError('Unauthorized access to document', 403);
+    }
+
+    // Delete from underlying storage (Local storage or S3)
+    await storageService.deleteFile(document.fileKey);
+
+    // Delete from database
+    await vendorRepository.deleteDocument(documentId);
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_DOCUMENT_DELETE',
+      `Deleted document: ${document.name}`,
+      ip,
+      userAgent
+    );
+  }
+
+  async saveLocalFile(fileKey: string, buffer: Buffer) {
+    return storageService.saveLocalFile(fileKey, buffer);
   }
 }
 

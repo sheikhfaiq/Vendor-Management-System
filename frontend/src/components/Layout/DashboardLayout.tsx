@@ -14,6 +14,8 @@ import {
   X,
   User as UserIcon,
   Shield,
+  FileText,
+  FolderOpen,
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -73,6 +75,11 @@ const DashboardLayoutComponent: React.FC = () => {
           icon: <Users className="h-5 w-5 shrink-0" />,
         },
         {
+          label: 'Vendor Documents',
+          path: '/admin/documents',
+          icon: <FolderOpen className="h-5 w-5 shrink-0" />,
+        },
+        {
           label: 'Activity Logs',
           path: '/admin/activity-logs',
           icon: <History className="h-5 w-5 shrink-0" />,
@@ -94,6 +101,11 @@ const DashboardLayoutComponent: React.FC = () => {
           label: 'My Services',
           path: '/vendor/services',
           icon: <ListPlus className="h-5 w-5 shrink-0" />,
+        },
+        {
+          label: 'My Documents',
+          path: '/vendor/documents',
+          icon: <FileText className="h-5 w-5 shrink-0" />,
         },
       ];
     }

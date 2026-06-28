@@ -3,6 +3,8 @@ import { authRepository } from '../auth/auth.repository';
 import { AppError } from '../../middleware/error.middleware';
 import { PaginationParams, formatPaginatedResult } from '../../utils/pagination';
 import { VendorStatus } from '@prisma/client';
+import prisma from '../../config/prisma';
+import { calculateProfileCompletion } from '../../utils/profileCompletion';
 
 export class AdminService {
   async getDashboardStats() {
@@ -15,6 +17,11 @@ export class AdminService {
       adminRepository.countVendors(),
     ]);
     return formatPaginatedResult(vendors, total, params);
+  }
+
+  async listAllDocuments(params: PaginationParams, vendorId?: string) {
+    const { docs, total } = await adminRepository.getAllDocuments(params.skip, params.limit, vendorId);
+    return formatPaginatedResult(docs, total, params);
   }
 
   async getVendorById(id: string) {
@@ -83,6 +90,192 @@ export class AdminService {
       adminRepository.countActivityLogs(),
     ]);
     return formatPaginatedResult(logs, total, params);
+  }
+
+  async updateVendorProfile(
+    adminId: string,
+    vendorId: string,
+    data: any,
+    ip?: string,
+    userAgent?: string
+  ) {
+    const updatedVendor = await adminRepository.updateVendorProfile(vendorId, data);
+    
+    await authRepository.createActivityLog(
+      adminId,
+      'VENDOR_PROFILE_UPDATE',
+      `Admin updated vendor profile details of ${updatedVendor.user.email} (ID: ${vendorId})`,
+      ip,
+      userAgent
+    );
+
+    return updatedVendor;
+  }
+
+  async addVendorService(
+    adminId: string,
+    vendorId: string,
+    subCategoryId: string,
+    scopes: any[],
+    ip?: string,
+    userAgent?: string
+  ) {
+    const profile = await prisma.vendorProfile.findUnique({
+      where: { id: vendorId },
+      include: { services: true, user: { select: { email: true } } },
+    });
+
+    if (!profile) {
+      throw new AppError('Vendor profile not found', 404);
+    }
+
+    const subCategory = await prisma.subCategory.findUnique({
+      where: { id: subCategoryId },
+    });
+    if (!subCategory) {
+      throw new AppError('Subcategory not found', 404);
+    }
+
+    const existing = profile.services.find(s => s.subCategoryId === subCategoryId);
+    if (existing) {
+      throw new AppError('This service is already registered for this vendor profile', 400);
+    }
+
+    const mapping = await prisma.vendorService.create({
+      data: {
+        vendorProfileId: vendorId,
+        subCategoryId,
+        scopes,
+      },
+    });
+
+    // Recalculate completion
+    const newServiceCount = profile.services.length + 1;
+    const profileCompletion = calculateProfileCompletion({
+      vendorType: profile.vendorType as any,
+      ownerName: profile.ownerName,
+      phone: profile.phone,
+      address: profile.address,
+      region: profile.region,
+      city: profile.city,
+      country: profile.country,
+      companyName: profile.companyName,
+      tradeLicenseNo: profile.tradeLicenseNo,
+      taxRegistrationNo: profile.taxRegistrationNo,
+      serviceCount: newServiceCount,
+    });
+
+    await prisma.vendorProfile.update({
+      where: { id: vendorId },
+      data: { profileCompletion },
+    });
+
+    await authRepository.createActivityLog(
+      adminId,
+      'ADMIN_VENDOR_SERVICE_ADDED',
+      `Admin added service ${subCategory.name} to vendor profile ${profile.user.email} (ID: ${vendorId})`,
+      ip,
+      userAgent
+    );
+
+    return mapping;
+  }
+
+  async updateVendorService(
+    adminId: string,
+    vendorId: string,
+    serviceId: string,
+    scopes: any[],
+    ip?: string,
+    userAgent?: string
+  ) {
+    const profile = await prisma.vendorProfile.findUnique({
+      where: { id: vendorId },
+      include: { user: { select: { email: true } } },
+    });
+
+    if (!profile) {
+      throw new AppError('Vendor profile not found', 404);
+    }
+
+    const mapping = await prisma.vendorService.findUnique({
+      where: { id: serviceId },
+    });
+    if (!mapping || mapping.vendorProfileId !== vendorId) {
+      throw new AppError('Vendor service mapping not found for this profile', 404);
+    }
+
+    const updated = await prisma.vendorService.update({
+      where: { id: serviceId },
+      data: { scopes },
+    });
+
+    await authRepository.createActivityLog(
+      adminId,
+      'ADMIN_VENDOR_SERVICE_UPDATED',
+      `Admin updated scopes of service mapping ID ${serviceId} for vendor profile ${profile.user.email} (ID: ${vendorId})`,
+      ip,
+      userAgent
+    );
+
+    return updated;
+  }
+
+  async deleteVendorService(
+    adminId: string,
+    vendorId: string,
+    serviceId: string,
+    ip?: string,
+    userAgent?: string
+  ) {
+    const profile = await prisma.vendorProfile.findUnique({
+      where: { id: vendorId },
+      include: { services: true, user: { select: { email: true } } },
+    });
+
+    if (!profile) {
+      throw new AppError('Vendor profile not found', 404);
+    }
+
+    const mapping = await prisma.vendorService.findUnique({
+      where: { id: serviceId },
+    });
+    if (!mapping || mapping.vendorProfileId !== vendorId) {
+      throw new AppError('Vendor service mapping not found for this profile', 404);
+    }
+
+    await prisma.vendorService.delete({
+      where: { id: serviceId },
+    });
+
+    // Recalculate completion
+    const newServiceCount = Math.max(0, profile.services.length - 1);
+    const profileCompletion = calculateProfileCompletion({
+      vendorType: profile.vendorType as any,
+      ownerName: profile.ownerName,
+      phone: profile.phone,
+      address: profile.address,
+      region: profile.region,
+      city: profile.city,
+      country: profile.country,
+      companyName: profile.companyName,
+      tradeLicenseNo: profile.tradeLicenseNo,
+      taxRegistrationNo: profile.taxRegistrationNo,
+      serviceCount: newServiceCount,
+    });
+
+    await prisma.vendorProfile.update({
+      where: { id: vendorId },
+      data: { profileCompletion },
+    });
+
+    await authRepository.createActivityLog(
+      adminId,
+      'ADMIN_VENDOR_SERVICE_DELETED',
+      `Admin deleted service mapping ID ${serviceId} from vendor profile ${profile.user.email} (ID: ${vendorId})`,
+      ip,
+      userAgent
+    );
   }
 }
 

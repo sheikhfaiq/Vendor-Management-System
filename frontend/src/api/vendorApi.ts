@@ -1,5 +1,5 @@
 import axiosClient from './axiosClient';
-import type { VendorProfile, VendorService } from '../types';
+import type { VendorProfile, VendorService, VendorDocument } from '../types';
 
 export const vendorApi = {
   async getProfile(): Promise<VendorProfile> {
@@ -50,5 +50,24 @@ export const vendorApi = {
   async getProfileCompletion(): Promise<{ completion: number; missingFields: string[] }> {
     const res = await axiosClient.get('/vendors/profile/completion');
     return res.data.data;
+  },
+
+  async getDocuments(): Promise<VendorDocument[]> {
+    const res = await axiosClient.get('/vendors/documents');
+    return res.data.data;
+  },
+
+  async requestUploadUrl(fileName: string, mimeType: string): Promise<{ uploadUrl: string; fileKey: string; fileUrl: string }> {
+    const res = await axiosClient.post('/vendors/documents/upload-url', { fileName, mimeType });
+    return res.data.data;
+  },
+
+  async confirmUpload(data: { name: string; fileKey: string; fileUrl: string; fileSize: number; mimeType: string }): Promise<VendorDocument> {
+    const res = await axiosClient.post('/vendors/documents/confirm', data);
+    return res.data.data;
+  },
+
+  async deleteDocument(id: string): Promise<void> {
+    await axiosClient.delete(`/vendors/documents/${id}`);
   },
 };

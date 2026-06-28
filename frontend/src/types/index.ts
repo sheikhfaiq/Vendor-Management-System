@@ -37,6 +37,11 @@ export interface VendorProfile {
   createdAt: string;
   updatedAt: string;
   services?: VendorService[];
+  user?: {
+    email: string;
+    role: string;
+  };
+  documents?: VendorDocument[];
 }
 
 export interface MainCategory {
@@ -86,3 +91,15 @@ export interface LoginResponse {
   refreshToken: string;
   user: User;
 }
+
+export interface VendorDocument {
+  id: string;
+  vendorProfileId: string;
+  name: string;
+  fileKey: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  uploadedAt: string;
+}
+

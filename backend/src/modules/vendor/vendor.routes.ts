@@ -24,4 +24,11 @@ router.delete('/services/:id', vendorController.deleteService as any);
 router.get('/dashboard', vendorController.getDashboard as any);
 router.get('/profile/completion', vendorController.getProfileCompletion as any);
 
+// Document management routes
+router.get('/documents', vendorController.getDocuments as any);
+router.post('/documents/upload-url', vendorController.generateUploadUrl as any);
+router.post('/documents/confirm', vendorController.confirmUpload as any);
+router.delete('/documents/:id', vendorController.deleteDocument as any);
+router.put('/documents/local-upload-mock', vendorController.localUploadMock as any);
+
 export default router;

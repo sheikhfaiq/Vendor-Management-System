@@ -8,7 +8,11 @@ import { Button } from '../../../components/Button/Button';
 import { Modal } from '../../../components/Modal/Modal';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
-import { ArrowLeft, Check, X } from 'lucide-react';
+import { ArrowLeft, Check, X, ExternalLink, Pencil, Plus, Trash2 } from 'lucide-react';
+import { EditVendorModal } from '../../../components/EditVendorModal/EditVendorModal';
+import { AddServiceModal } from '../../../components/AddServiceModal/AddServiceModal';
+import { EditServiceScopesModal } from '../../../components/EditServiceScopesModal/EditServiceScopesModal';
+import type { VendorProfile } from '../../../types';
 
 const VendorDetailsComponent: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
@@ -22,6 +26,81 @@ const VendorDetailsComponent: React.FC = () => {
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<'APPROVED' | 'REJECTED' | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const [isAddServiceOpen, setIsAddServiceOpen] = useState(false);
+  const [isEditServiceOpen, setIsEditServiceOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<any | null>(null);
+
+  const addServiceMutation = useMutation({
+    mutationFn: ({ subCategoryId, scopes }: { subCategoryId: string; scopes: string[] }) =>
+      adminApi.addVendorService(id, subCategoryId, scopes),
+    onSuccess: () => {
+      toastService.success('Vendor service added successfully');
+      queryClient.invalidateQueries({ queryKey: ['adminVendorDetails', id] });
+      setIsAddServiceOpen(false);
+    },
+    onError: (error: any) => {
+      const errMsg = error.response?.data?.message || 'Failed to add vendor service';
+      logger.error('Failed to add vendor service', error);
+      toastService.error(errMsg);
+    },
+  });
+
+  const updateServiceMutation = useMutation({
+    mutationFn: ({ serviceId, scopes }: { serviceId: string; scopes: string[] }) =>
+      adminApi.updateVendorService(id, serviceId, scopes),
+    onSuccess: () => {
+      toastService.success('Vendor service scopes updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['adminVendorDetails', id] });
+      setIsEditServiceOpen(false);
+      setSelectedService(null);
+    },
+    onError: (error: any) => {
+      const errMsg = error.response?.data?.message || 'Failed to update service scopes';
+      logger.error('Failed to update service scopes', error);
+      toastService.error(errMsg);
+    },
+  });
+
+  const deleteServiceMutation = useMutation({
+    mutationFn: (serviceId: string) => adminApi.deleteVendorService(id, serviceId),
+    onSuccess: () => {
+      toastService.success('Vendor service mapping removed successfully');
+      queryClient.invalidateQueries({ queryKey: ['adminVendorDetails', id] });
+    },
+    onError: (error: any) => {
+      const errMsg = error.response?.data?.message || 'Failed to remove vendor service';
+      logger.error('Failed to remove service mapping', error);
+      toastService.error(errMsg);
+    },
+  });
+
+  const handleEditServiceClick = useCallback((svc: any) => {
+    setSelectedService(svc);
+    setIsEditServiceOpen(true);
+  }, []);
+
+  const handleDeleteServiceClick = useCallback(async (serviceId: string) => {
+    if (window.confirm('Are you sure you want to remove this service division from the contractor profile?')) {
+      await deleteServiceMutation.mutateAsync(serviceId);
+    }
+  }, [deleteServiceMutation]);
+
+  const editMutation = useMutation({
+    mutationFn: (data: Partial<VendorProfile>) => adminApi.updateVendorProfile(id, data),
+    onSuccess: () => {
+      toastService.success('Vendor profile details updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['adminVendorDetails', id] });
+      queryClient.invalidateQueries({ queryKey: ['adminVendors'] });
+      setIsEditOpen(false);
+    },
+    onError: (error: any) => {
+      const errMsg = error.response?.data?.message || 'Failed to update vendor profile';
+      logger.error('Failed to update profile', error);
+      toastService.error(errMsg);
+    },
+  });
 
   const statusMutation = useMutation({
     mutationFn: ({ status }: { status: 'PENDING' | 'APPROVED' | 'REJECTED' }) =>
@@ -77,7 +156,7 @@ const VendorDetailsComponent: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full">
       <div className="flex items-center gap-2">
         <Link
           to="/admin/vendors"
@@ -97,7 +176,15 @@ const VendorDetailsComponent: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 select-none">
+          <Button
+            onClick={() => setIsEditOpen(true)}
+            variant="secondary"
+            className="flex items-center gap-1.5 text-xs py-1.5 px-3 border-slate-200 text-slate-650 hover:bg-slate-50"
+          >
+            <Pencil className="h-3.5 w-3.5" /> Edit Profile
+          </Button>
+
           <span
             className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold border ${
               vendor.status === 'APPROVED'
@@ -175,7 +262,19 @@ const VendorDetailsComponent: React.FC = () => {
           </Card>
 
           {/* Service trades table */}
-          <Card title="Registered Service Divisions" subtitle="Trade lists and active scopes of work">
+          <Card
+            title="Registered Service Divisions"
+            subtitle="Trade lists and active scopes of work"
+            headerAction={
+              <Button
+                onClick={() => setIsAddServiceOpen(true)}
+                variant="secondary"
+                className="flex items-center gap-1 text-xs py-1 px-2.5 border-slate-200 text-slate-650 hover:bg-slate-50 font-semibold"
+              >
+                <Plus className="h-3.5 w-3.5" /> Add Service
+              </Button>
+            }
+          >
             {services.length === 0 ? (
               <p className="text-xs text-slate-400 italic text-center py-6">No trade categories registered.</p>
             ) : (
@@ -186,7 +285,8 @@ const VendorDetailsComponent: React.FC = () => {
                       <th className="py-2.5 px-3">Division</th>
                       <th className="py-2.5 px-3">Category</th>
                       <th className="py-2.5 px-3">Subcategory / Trade</th>
-                      <th className="py-2.5 px-3 text-right">Scope of Work</th>
+                      <th className="py-2.5 px-3">Scope of Work</th>
+                      <th className="py-2.5 px-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50 text-slate-600 font-medium">
@@ -195,20 +295,83 @@ const VendorDetailsComponent: React.FC = () => {
                         <td className="py-3 px-3">{svc.subCategory?.category?.mainCategory?.name}</td>
                         <td className="py-3 px-3">{svc.subCategory?.category?.name}</td>
                         <td className="py-3 px-3 font-bold text-slate-800">{svc.subCategory?.name}</td>
-                        <td className="py-3 px-3 text-right">
-                          <div className="flex flex-wrap gap-1 justify-end">
+                        <td className="py-3 px-3">
+                          <div className="flex flex-wrap gap-1.5">
                             {svc.scopes.map((scope: string) => (
                               <span
                                 key={scope}
-                                className="inline-flex px-1.5 py-0.5 roundedbg-slate-150 text-[10px] font-bold bg-slate-100 text-slate-600"
+                                className="inline-flex items-center px-2 py-0.5 rounded-full text-xxs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-100/50"
                               >
                                 {scope.replace(/_/g, ' ')}
                               </span>
                             ))}
                           </div>
                         </td>
+                        <td className="py-3 px-3 text-right">
+                          <div className="flex items-center gap-1.5 justify-end">
+                            <button
+                              onClick={() => handleEditServiceClick(svc)}
+                              className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded transition-colors"
+                              title="Edit Service Scopes"
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteServiceClick(svc.id)}
+                              className="p-1.5 text-slate-400 hover:text-red-655 hover:bg-red-50 rounded transition-colors"
+                              title="Delete Service Mapping"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+          {/* Compliance documents list */}
+          <Card title="Compliance Business Documents" subtitle="Licenses, tax registries, and validation certificates">
+            {vendor.documents && vendor.documents.length === 0 ? (
+              <p className="text-xs text-slate-400 italic text-center py-6">No compliance documents uploaded yet.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
+                      <th className="py-2.5 px-3">Document Type</th>
+                      <th className="py-2.5 px-3">Filename</th>
+                      <th className="py-2.5 px-3">Size</th>
+                      <th className="py-2.5 px-3 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-50 text-slate-650 font-medium">
+                    {vendor.documents?.map((doc: any) => {
+                      const baseName = doc.fileKey.replace(/^documents\//, '');
+                      const prefixRegex = /^[a-f0-9-]{36}-\d{13}-[a-f0-9]{8}-/;
+                      const cleanName = baseName.replace(prefixRegex, '');
+                      const kbs = (doc.fileSize / 1024).toFixed(1);
+
+                      return (
+                        <tr key={doc.id}>
+                          <td className="py-3 px-3 font-semibold text-slate-800">{doc.name}</td>
+                          <td className="py-3 px-3 text-slate-500 font-mono text-xxs max-w-[200px] truncate">{cleanName}</td>
+                          <td className="py-3 px-3 text-slate-400">{kbs} KB</td>
+                          <td className="py-3 px-3 text-right">
+                            <a
+                              href={doc.fileUrl.startsWith('http') ? doc.fileUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:5050'}${doc.fileUrl}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-hover hover:underline"
+                            >
+                              <ExternalLink className="h-3.5 w-3.5" /> View
+                            </a>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -303,6 +466,39 @@ const VendorDetailsComponent: React.FC = () => {
             : `Are you sure you want to reject the application for ${vendor.companyName || vendor.ownerName}? They will be marked as rejected and excluded from active vendor queries.`}
         </p>
       </Modal>
+
+      <EditVendorModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        vendor={vendor}
+        onSave={async (data) => {
+          await editMutation.mutateAsync(data);
+        }}
+        isSaving={editMutation.isPending}
+      />
+
+      <AddServiceModal
+        isOpen={isAddServiceOpen}
+        onClose={() => setIsAddServiceOpen(false)}
+        onAdd={async (subCategoryId, scopes) => {
+          await addServiceMutation.mutateAsync({ subCategoryId, scopes });
+        }}
+        isAdding={addServiceMutation.isPending}
+        existingSubCategoryIds={services.map((s: any) => s.subCategoryId)}
+      />
+
+      <EditServiceScopesModal
+        isOpen={isEditServiceOpen}
+        onClose={() => {
+          setIsEditServiceOpen(false);
+          setSelectedService(null);
+        }}
+        service={selectedService}
+        onSave={async (serviceId, scopes) => {
+          await updateServiceMutation.mutateAsync({ serviceId, scopes });
+        }}
+        isSaving={updateServiceMutation.isPending}
+      />
     </div>
   );
 };

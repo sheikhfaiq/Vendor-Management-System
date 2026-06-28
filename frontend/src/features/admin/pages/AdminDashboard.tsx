@@ -24,11 +24,6 @@ const AdminDashboardComponent: React.FC = () => {
     queryFn: () => adminApi.listVendors({ page: 1, limit: 5 }),
   });
 
-  const { data: latestActivityData, isLoading: isLoadingLogs } = useQuery({
-    queryKey: ['adminDashboardLatestActivity'],
-    queryFn: () => adminApi.listActivityLogs({ page: 1, limit: 5 }),
-  });
-
   const stats = useMemo(() => {
     if (!statsData) {
       return {
@@ -46,20 +41,16 @@ const AdminDashboardComponent: React.FC = () => {
     return recentVendorsData?.data || [];
   }, [recentVendorsData]);
 
-  const latestActivity = useMemo(() => {
-    return latestActivityData?.data || [];
-  }, [latestActivityData]);
-
-  const isLoading = isLoadingStats || isLoadingVendors || isLoadingLogs;
+  const isLoading = isLoadingStats || isLoadingVendors;
 
   if (isLoading) return <Loader />;
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 w-full">
       <div>
         <h1 className="text-xl font-bold text-slate-800 tracking-tight">System Admin Dashboard</h1>
         <p className="text-xs text-slate-400 mt-0.5">
-          General overview of contractor applications, service lists, and logs
+          General overview of contractor applications and service lists
         </p>
       </div>
 
@@ -116,42 +107,70 @@ const AdminDashboardComponent: React.FC = () => {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="w-full flex flex-col gap-4">
         {/* Recent Vendor Submissions */}
-        <div className="lg:col-span-2 flex flex-col gap-4">
-          <Card
-            title="Recent Vendor Onboardings"
-            subtitle="Review pending or recent company profile listings"
-            headerAction={
-              <Link
-                to="/admin/vendors"
-                className="text-xs font-semibold text-primary hover:text-primary-hover hover:underline inline-flex items-center gap-1"
-              >
-                Browse All <ArrowRight className="h-3 w-3" />
-              </Link>
-            }
-          >
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
-                    <th className="py-3 px-3">Vendor / Contact</th>
-                    <th className="py-3 px-3">Type</th>
-                    <th className="py-3 px-3">Completion</th>
-                    <th className="py-3 px-3">Status</th>
-                    <th className="py-3 px-3 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-50 text-slate-600 font-medium">
-                  {recentVendors.map((vendor) => (
+        <Card
+          title="Recent Vendor Onboardings"
+          subtitle="Review pending or recent company profile listings"
+          headerAction={
+            <Link
+              to="/admin/vendors"
+              className="text-xs font-semibold text-primary hover:text-primary-hover hover:underline inline-flex items-center gap-1"
+            >
+              Browse All <ArrowRight className="h-3 w-3" />
+            </Link>
+          }
+        >
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
+                  <th className="py-3 px-3">Vendor ID</th>
+                  <th className="py-3 px-3">Vendor / Contact</th>
+                  <th className="py-3 px-3">Company Email</th>
+                  <th className="py-3 px-3">Vendor Role</th>
+                  <th className="py-3 px-3">Type</th>
+                  <th className="py-3 px-3">Scope of Work</th>
+                  <th className="py-3 px-3">Completion</th>
+                  <th className="py-3 px-3">Status</th>
+                  <th className="py-3 px-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50 text-slate-600 font-medium">
+                {recentVendors.map((vendor) => {
+                  const uniqueScopes = Array.from(
+                    new Set(vendor.services?.flatMap((svc: any) => svc.scopes) || [])
+                  );
+
+                  return (
                     <tr key={vendor.id} className="hover:bg-slate-50/50 transition-colors">
+                      <td className="py-3.5 px-3 font-mono text-xs text-slate-500 font-semibold">
+                        {vendor.id.slice(0, 8)}
+                      </td>
                       <td className="py-3.5 px-3">
                         <span className="font-bold text-slate-800 block">
                           {vendor.companyName || vendor.ownerName}
                         </span>
                         <span className="text-xxs text-slate-400 font-medium">{vendor.phone}</span>
                       </td>
+                      <td className="py-3.5 px-3 text-slate-500 font-semibold">{vendor.user?.email || 'N/A'}</td>
+                      <td className="py-3.5 px-3 text-slate-700 font-semibold">{vendor.businessCategory || 'N/A'}</td>
                       <td className="py-3.5 px-3 uppercase text-xxs font-bold">{vendor.vendorType}</td>
+                      <td className="py-3.5 px-3">
+                        <div className="flex flex-wrap gap-1">
+                          {uniqueScopes.map((scope: string) => (
+                            <span
+                              key={scope}
+                              className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-100/50"
+                            >
+                              {scope.replace(/_/g, ' ')}
+                            </span>
+                          ))}
+                          {uniqueScopes.length === 0 && (
+                            <span className="text-xxs text-slate-400 italic font-medium">None</span>
+                          )}
+                        </div>
+                      </td>
                       <td className="py-3.5 px-3">{vendor.profileCompletion}%</td>
                       <td className="py-3.5 px-3">
                         <span
@@ -175,38 +194,18 @@ const AdminDashboardComponent: React.FC = () => {
                         </Link>
                       </td>
                     </tr>
-                  ))}
-                  {recentVendors.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="py-6 text-center text-slate-400 italic">
-                        No recent vendors registered.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        </div>
-
-        {/* Audit Log Timeline */}
-        <Card title="Latest Admin Activity Log" subtitle="Log audit of actions taken across the system">
-          {latestActivity.length === 0 ? (
-            <p className="text-xs text-slate-400 italic text-center py-6">No logs recorded.</p>
-          ) : (
-            <div className="flex flex-col divide-y divide-slate-100/50 max-h-[400px] overflow-y-auto pr-1">
-              {latestActivity.map((log) => (
-                <div key={log.id} className="py-3 flex flex-col gap-0.5">
-                  <span className="text-xs font-bold text-slate-700">{log.action}</span>
-                  <span className="text-xxs text-slate-400 leading-normal">{log.details}</span>
-                  <span className="text-[10px] text-slate-400 font-semibold mt-1">
-                    {new Date(log.createdAt).toLocaleDateString()} at{' '}
-                    {new Date(log.createdAt).toLocaleTimeString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+                  );
+                })}
+                {recentVendors.length === 0 && (
+                  <tr>
+                    <td colSpan={9} className="py-6 text-center text-slate-400 italic">
+                      No recent vendors registered.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </Card>
       </div>
     </div>

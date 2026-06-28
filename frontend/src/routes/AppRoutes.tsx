@@ -24,6 +24,7 @@ const NotFound = lazy(() => import('../features/auth/pages/NotFound'));
 const VendorDashboard = lazy(() => import('../features/vendor/pages/VendorDashboard'));
 const ProfileCompletion = lazy(() => import('../features/vendor/pages/ProfileCompletion'));
 const MyServices = lazy(() => import('../features/vendor/pages/MyServices'));
+const MyDocuments = lazy(() => import('../features/vendor/pages/MyDocuments'));
 
 // Protected Pages (Admin)
 const AdminDashboard = lazy(() => import('../features/admin/pages/AdminDashboard'));
@@ -31,6 +32,7 @@ const VendorList = lazy(() => import('../features/admin/pages/VendorList'));
 const VendorDetails = lazy(() => import('../features/admin/pages/VendorDetails'));
 const ManageServices = lazy(() => import('../features/admin/pages/ManageServices'));
 const ManageUsers = lazy(() => import('../features/admin/pages/ManageUsers'));
+const VendorDocuments = lazy(() => import('../features/admin/pages/VendorDocuments'));
 const ActivityLogs = lazy(() => import('../features/admin/pages/ActivityLogs'));
 
 const AppRoutes: React.FC = () => {
@@ -72,6 +74,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/vendor/dashboard" element={<VendorDashboard />} />
           <Route path="/vendor/profile-completion" element={<ProfileCompletion />} />
           <Route path="/vendor/services" element={<MyServices />} />
+          <Route path="/vendor/documents" element={<MyDocuments />} />
         </Route>
 
         {/* Protected Admin Routes */}
@@ -87,6 +90,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/admin/vendors/:id" element={<VendorDetails />} />
           <Route path="/admin/services" element={<ManageServices />} />
           <Route path="/admin/users" element={<ManageUsers />} />
+          <Route path="/admin/documents" element={<VendorDocuments />} />
           <Route path="/admin/activity-logs" element={<ActivityLogs />} />
         </Route>
 

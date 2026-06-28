@@ -96,6 +96,89 @@ export class AdminController {
       next(error);
     }
   }
+
+  async updateVendorProfile(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const adminId = req.user!.userId;
+      const result = await adminService.updateVendorProfile(
+        adminId,
+        id,
+        req.body,
+        req.ip,
+        req.headers['user-agent']
+      );
+      sendSuccess(res, 'Vendor profile details updated successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addVendorService(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const adminId = req.user!.userId;
+      const { subCategoryId, scopes } = req.body;
+      const result = await adminService.addVendorService(
+        adminId,
+        id,
+        subCategoryId,
+        scopes,
+        req.ip,
+        req.headers['user-agent']
+      );
+      sendSuccess(res, 'Vendor service mapping added successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateVendorService(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id, serviceId } = req.params;
+      const adminId = req.user!.userId;
+      const { scopes } = req.body;
+      const result = await adminService.updateVendorService(
+        adminId,
+        id,
+        serviceId,
+        scopes,
+        req.ip,
+        req.headers['user-agent']
+      );
+      sendSuccess(res, 'Vendor service mapping updated successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteVendorService(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id, serviceId } = req.params;
+      const adminId = req.user!.userId;
+      await adminService.deleteVendorService(
+        adminId,
+        id,
+        serviceId,
+        req.ip,
+        req.headers['user-agent']
+      );
+      sendSuccess(res, 'Vendor service mapping deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async listAllDocuments(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const params = getPaginationParams(req.query);
+      const vendorId = req.query.vendorId as string | undefined;
+      const result = await adminService.listAllDocuments(params, vendorId);
+      sendSuccess(res, 'All vendor documents retrieved successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const adminController = new AdminController();

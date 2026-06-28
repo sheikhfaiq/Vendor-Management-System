@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import logger from './config/logger';
 import { errorHandler } from './middleware/error.middleware';
 
@@ -12,6 +13,9 @@ import vendorRoutes from './modules/vendor/vendor.routes';
 import adminRoutes from './modules/admin/admin.routes';
 
 const app = express();
+
+// Serve static files for uploaded documents (local fallback mode)
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 
 // Security and utility middleware
 app.use(helmet());

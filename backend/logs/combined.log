@@ -373,3 +373,179 @@
 {"level":"info","message":"::ffff:127.0.0.1 - POST /auth/login 200 87.302 ms - 1151","timestamp":"2026-06-28 12:19:15"}
 {"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile 200 8.889 ms - 535","timestamp":"2026-06-28 12:19:15"}
 {"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile/completion 200 10.505 ms - 236","timestamp":"2026-06-28 12:19:15"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 60.233 ms - -","timestamp":"2026-06-28 12:23:03"}
+{"level":"error","message":"API Error: Unauthorized access","stack":"Error: Unauthorized access\n    at authenticate (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\middleware\\auth.middleware.ts:33:10)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at router.handle (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:47:12)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)","timestamp":"2026-06-28 12:28:48"}
+{"level":"info","message":"::1 - GET /vendors/services 401 7.790 ms - 61","timestamp":"2026-06-28 12:28:48"}
+{"level":"info","message":"::1 - GET /services/main-categories 200 78.781 ms - 674","timestamp":"2026-06-28 12:28:48"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 90.345 ms - 506","timestamp":"2026-06-28 12:28:48"}
+{"level":"info","message":"::1 - GET /vendors/services 200 11.212 ms - 77","timestamp":"2026-06-28 12:28:49"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 11.464 ms - 505","timestamp":"2026-06-28 12:31:36"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 106.089 ms - -","timestamp":"2026-06-28 12:35:42"}
+{"level":"info","message":"::1 - GET /vendors/services 304 115.170 ms - -","timestamp":"2026-06-28 12:35:42"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 4.142 ms - -","timestamp":"2026-06-28 12:37:06"}
+{"level":"info","message":"::1 - GET /services/categories/581ed4c3-66fe-416f-a4e2-985f8362aea5 200 6.349 ms - 450","timestamp":"2026-06-28 12:37:34"}
+{"level":"info","message":"::1 - GET /services/sub-categories/3e506cbd-fe84-42d7-925a-f96e87fe8c50 200 8.754 ms - 559","timestamp":"2026-06-28 12:37:35"}
+{"level":"info","message":"::1 - GET /services/categories/a977218f-be4c-4967-adab-444df5d23ffb 200 5.437 ms - 718","timestamp":"2026-06-28 12:37:48"}
+{"level":"info","message":"::1 - GET /services/sub-categories/a27cb295-aad9-4e93-8c0c-0d390923d8ff 200 2.937 ms - 904","timestamp":"2026-06-28 12:37:51"}
+{"level":"info","message":"::1 - POST /vendors/services 201 31.802 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 8.880 ms - 713","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 30.826 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 7.801 ms - 1345","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 17.570 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 8.330 ms - 1977","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 19.052 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 10.915 ms - 2611","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 23.087 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 9.909 ms - 3243","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 16.542 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 8.775 ms - 3873","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 18.736 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 11.133 ms - 4506","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 18.818 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 10.726 ms - 5142","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 20.661 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 10.529 ms - 5780","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 17.066 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 9.226 ms - 6412","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - POST /vendors/services 201 17.732 ms - 333","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/services 200 9.647 ms - 7048","timestamp":"2026-06-28 12:38:05"}
+{"level":"info","message":"::1 - GET /vendors/profile/completion 200 6.484 ms - 217","timestamp":"2026-06-28 12:38:12"}
+{"level":"info","message":"::1 - GET /vendors/dashboard 200 9.112 ms - 2110","timestamp":"2026-06-28 12:38:12"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 200 4.558 ms - 7622","timestamp":"2026-06-28 12:39:04"}
+{"level":"info","message":"::1 - PATCH /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49/status 200 15.362 ms - 587","timestamp":"2026-06-28 12:39:08"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 200 11.242 ms - 7623","timestamp":"2026-06-28 12:39:08"}
+{"level":"info","message":"::1 - GET /services/main-categories 200 2.443 ms - 674","timestamp":"2026-06-28 12:39:15"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 200 7.074 ms - 6141","timestamp":"2026-06-28 12:39:15"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 51.162 ms - 506","timestamp":"2026-06-28 12:42:49"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:46:25"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:46:35"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:46:48"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:47:06"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:47:18"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:47:25"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:47:32"}
+{"level":"info","message":"::1 - GET /vendors/dashboard 200 151.526 ms - 2111","timestamp":"2026-06-28 12:48:11"}
+{"level":"info","message":"::1 - GET /vendors/profile/completion 304 161.742 ms - -","timestamp":"2026-06-28 12:48:11"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:50:35"}
+{"level":"info","message":"::1 - GET /vendors/documents 200 72.316 ms - 78","timestamp":"2026-06-28 12:51:20"}
+{"level":"info","message":"::1 - POST /vendors/documents/upload-url 200 9.730 ms - 497","timestamp":"2026-06-28 12:51:52"}
+{"level":"error","message":"API Error: Unauthorized access","stack":"Error: Unauthorized access\n    at authenticate (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\middleware\\auth.middleware.ts:33:10)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at router.handle (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:47:12)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)","timestamp":"2026-06-28 12:51:52"}
+{"level":"info","message":"::1 - PUT /vendors/documents/local-upload-mock?fileKey=documents%2Fc15857e3-5c92-4106-963f-661fb4c42d49-1782633112758-7e2ff4ca-List_of_Categories.pdf 401 8.470 ms - 61","timestamp":"2026-06-28 12:51:52"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:52:30"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:52:42"}
+{"level":"info","message":"::1 - GET /vendors/documents 304 74.630 ms - -","timestamp":"2026-06-28 12:53:28"}
+{"level":"info","message":"::1 - POST /vendors/documents/upload-url 200 5.357 ms - 497","timestamp":"2026-06-28 12:53:44"}
+{"level":"error","message":"API Error: Unauthorized access","stack":"Error: Unauthorized access\n    at authenticate (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\middleware\\auth.middleware.ts:33:10)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at router.handle (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:47:12)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)","timestamp":"2026-06-28 12:53:44"}
+{"level":"info","message":"::1 - PUT /vendors/documents/local-upload-mock?fileKey=documents%2Fc15857e3-5c92-4106-963f-661fb4c42d49-1782633224298-9a2b4f31-List_of_Categories.pdf 401 7.296 ms - 61","timestamp":"2026-06-28 12:53:44"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:55:56"}
+{"level":"info","message":"::1 - GET /vendors/documents 304 73.290 ms - -","timestamp":"2026-06-28 12:56:03"}
+{"level":"info","message":"::1 - GET /vendors/documents 304 31.443 ms - -","timestamp":"2026-06-28 12:56:04"}
+{"level":"info","message":"::1 - POST /vendors/documents/upload-url 200 8.582 ms - 497","timestamp":"2026-06-28 12:56:19"}
+{"level":"info","message":"::1 - PUT /vendors/documents/local-upload-mock?fileKey=documents%2Fc15857e3-5c92-4106-963f-661fb4c42d49-1782633379573-44cb2433-List_of_Categories.pdf 200 5.552 ms - 209","timestamp":"2026-06-28 12:56:19"}
+{"level":"info","message":"::1 - POST /vendors/documents/confirm 201 27.396 ms - 512","timestamp":"2026-06-28 12:56:19"}
+{"level":"info","message":"::1 - GET /vendors/documents 200 9.671 ms - 523","timestamp":"2026-06-28 12:56:19"}
+{"level":"info","message":"::1 - GET /uploads/documents/c15857e3-5c92-4106-963f-661fb4c42d49-1782633379573-44cb2433-List_of_Categories.pdf 404 2.764 ms - 239","timestamp":"2026-06-28 12:56:26"}
+{"level":"info","message":"::1 - GET /vendors/documents 304 4.146 ms - -","timestamp":"2026-06-28 12:56:55"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 218.723 ms - 506","timestamp":"2026-06-28 13:13:20"}
+{"level":"info","message":"::1 - GET /vendors/documents 304 16.152 ms - -","timestamp":"2026-06-28 13:13:51"}
+{"level":"info","message":"::1 - GET /vendors/services 304 8.921 ms - -","timestamp":"2026-06-28 13:16:21"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 176.961 ms - -","timestamp":"2026-06-28 13:16:21"}
+{"level":"info","message":"::1 - GET /vendors/profile 200 10.109 ms - 7523","timestamp":"2026-06-28 13:16:28"}
+{"level":"info","message":"::1 - GET /vendors/profile/completion 304 5.937 ms - -","timestamp":"2026-06-28 13:16:34"}
+{"level":"info","message":"::1 - GET /vendors/dashboard 200 11.529 ms - 2101","timestamp":"2026-06-28 13:16:34"}
+{"level":"info","message":"::1 - POST /auth/login 200 74.280 ms - 690","timestamp":"2026-06-28 13:17:08"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=5 200 79.435 ms - 2251","timestamp":"2026-06-28 13:17:08"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 200 84.032 ms - 3082","timestamp":"2026-06-28 13:17:08"}
+{"level":"info","message":"::1 - GET /admin/dashboard 200 176.894 ms - 194","timestamp":"2026-06-28 13:17:09"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 304 15.580 ms - -","timestamp":"2026-06-28 13:17:12"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 304 66.895 ms - -","timestamp":"2026-06-28 13:23:02"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 162.764 ms - -","timestamp":"2026-06-28 13:23:02"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 304 13.254 ms - -","timestamp":"2026-06-28 13:23:04"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 76.295 ms - -","timestamp":"2026-06-28 13:23:04"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=5 304 76.155 ms - -","timestamp":"2026-06-28 13:23:04"}
+{"level":"info","message":"::1 - GET /services 200 12.033 ms - 35070","timestamp":"2026-06-28 13:25:47"}
+{"level":"info","message":"::1 - GET /admin/users?page=1&limit=10 200 5.485 ms - 2958","timestamp":"2026-06-28 13:25:54"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:26:03"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=10 200 119.122 ms - 4331","timestamp":"2026-06-28 13:26:03"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 18.316 ms - 506","timestamp":"2026-06-28 13:27:51"}
+{"level":"info","message":"::1 - GET /admin/vendors/95a4a0e9-23c8-42ec-bcda-76843548e323 200 12.591 ms - 2781","timestamp":"2026-06-28 13:27:56"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 89.143 ms - -","timestamp":"2026-06-28 13:29:43"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 200 89.844 ms - 9720","timestamp":"2026-06-28 13:29:43"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 11.097 ms - -","timestamp":"2026-06-28 13:30:58"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 304 18.024 ms - -","timestamp":"2026-06-28 13:30:58"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 9.422 ms - -","timestamp":"2026-06-28 13:30:59"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 2.653 ms - -","timestamp":"2026-06-28 13:31:50"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 200 64.614 ms - 18501","timestamp":"2026-06-28 13:31:50"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:35:07"}
+{"level":"error","message":"API Error: Unauthorized access","stack":"Error: Unauthorized access\n    at authenticate (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\middleware\\auth.middleware.ts:33:10)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at router.handle (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:47:12)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)","timestamp":"2026-06-28 13:36:27"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 401 12.610 ms - 61","timestamp":"2026-06-28 13:36:27"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 62.062 ms - 505","timestamp":"2026-06-28 13:36:27"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 304 14.512 ms - -","timestamp":"2026-06-28 13:36:27"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 91.493 ms - -","timestamp":"2026-06-28 13:36:37"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 304 93.163 ms - -","timestamp":"2026-06-28 13:36:37"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 5.043 ms - -","timestamp":"2026-06-28 13:37:33"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 304 12.623 ms - -","timestamp":"2026-06-28 13:37:33"}
+{"level":"info","message":"::1 - GET /services 304 9.115 ms - -","timestamp":"2026-06-28 13:37:42"}
+{"level":"info","message":"::1 - GET /admin/users?page=1&limit=10 304 4.825 ms - -","timestamp":"2026-06-28 13:37:43"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=10 304 4.939 ms - -","timestamp":"2026-06-28 13:37:51"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 1.251 ms - -","timestamp":"2026-06-28 13:40:58"}
+{"level":"info","message":"::1 - GET /vendors/services 304 9.868 ms - -","timestamp":"2026-06-28 13:40:58"}
+{"level":"info","message":"::1 - GET /vendors/documents 304 6.758 ms - -","timestamp":"2026-06-28 13:40:59"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 4.636 ms - -","timestamp":"2026-06-28 13:41:16"}
+{"level":"info","message":"::1 - GET /vendors/dashboard 304 9.212 ms - -","timestamp":"2026-06-28 13:41:19"}
+{"level":"info","message":"::1 - GET /vendors/profile/completion 304 16.316 ms - -","timestamp":"2026-06-28 13:41:19"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 80.387 ms - -","timestamp":"2026-06-28 13:43:27"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 304 90.155 ms - -","timestamp":"2026-06-28 13:43:27"}
+{"level":"info","message":"::1 - GET /services 304 9.114 ms - -","timestamp":"2026-06-28 13:43:28"}
+{"level":"info","message":"::1 - GET /admin/users?page=1&limit=10 304 3.353 ms - -","timestamp":"2026-06-28 13:43:29"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=10 304 5.277 ms - -","timestamp":"2026-06-28 13:43:30"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 304 11.742 ms - -","timestamp":"2026-06-28 13:43:36"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 74.787 ms - -","timestamp":"2026-06-28 13:43:36"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 8.104 ms - 506","timestamp":"2026-06-28 13:44:59"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:47:48"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:48:04"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:48:19"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:49:52"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:50:02"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 304 178.882 ms - -","timestamp":"2026-06-28 13:50:25"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 238.112 ms - -","timestamp":"2026-06-28 13:50:25"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 11.717 ms - 505","timestamp":"2026-06-28 13:50:28"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:51:09"}
+{"level":"info","message":"::1 - GET /vendors/profile/completion 304 81.780 ms - -","timestamp":"2026-06-28 13:51:39"}
+{"level":"info","message":"::1 - GET /vendors/dashboard 304 189.403 ms - -","timestamp":"2026-06-28 13:51:39"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 304 173.493 ms - -","timestamp":"2026-06-28 13:51:39"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 179.884 ms - -","timestamp":"2026-06-28 13:51:39"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 5.451 ms - -","timestamp":"2026-06-28 13:52:52"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 304 12.743 ms - -","timestamp":"2026-06-28 13:52:52"}
+{"level":"info","message":"::1 - GET /services 304 8.317 ms - -","timestamp":"2026-06-28 13:53:00"}
+{"level":"info","message":"::1 - GET /admin/users?page=1&limit=10 304 7.659 ms - -","timestamp":"2026-06-28 13:53:02"}
+{"level":"info","message":"::1 - GET /admin/activity-logs?page=1&limit=10 304 4.927 ms - -","timestamp":"2026-06-28 13:53:04"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 5.439 ms - -","timestamp":"2026-06-28 13:54:23"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 304 10.450 ms - -","timestamp":"2026-06-28 13:54:23"}
+{"level":"info","message":"::1 - GET /vendors/profile/completion 304 10.236 ms - -","timestamp":"2026-06-28 13:54:23"}
+{"level":"info","message":"::1 - GET /vendors/dashboard 304 26.099 ms - -","timestamp":"2026-06-28 13:54:23"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=5 304 4.784 ms - -","timestamp":"2026-06-28 13:56:18"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 7.121 ms - -","timestamp":"2026-06-28 13:56:18"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 200 11.861 ms - 8083","timestamp":"2026-06-28 13:56:26"}
+{"level":"info","message":"::1 - GET /uploads/documents/c15857e3-5c92-4106-963f-661fb4c42d49-1782633379573-44cb2433-List_of_Categories.pdf 404 2.101 ms - 239","timestamp":"2026-06-28 13:56:36"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 13:59:04"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 304 208.505 ms - -","timestamp":"2026-06-28 14:01:03"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 3.583 ms - -","timestamp":"2026-06-28 14:01:23"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 304 53.700 ms - -","timestamp":"2026-06-28 14:01:23"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 14:02:44"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 14:02:58"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 14:03:07"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 14:03:15"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 14:09:16"}
+{"level":"error","message":"API Error: Unauthorized access","stack":"Error: Unauthorized access\n    at authenticate (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\middleware\\auth.middleware.ts:33:10)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)\n    at C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:286:9\n    at router.process_params (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:346:12)\n    at next (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:280:10)\n    at router.handle (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:175:3)\n    at router (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:47:12)\n    at Layer.handle [as handle_request] (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\layer.js:95:5)\n    at trim_prefix (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\node_modules\\express\\lib\\router\\index.js:328:13)","timestamp":"2026-06-28 14:09:29"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 401 9.485 ms - 61","timestamp":"2026-06-28 14:09:29"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 63.897 ms - 505","timestamp":"2026-06-28 14:09:29"}
+{"level":"info","message":"::1 - GET /admin/vendors/c15857e3-5c92-4106-963f-661fb4c42d49 304 13.603 ms - -","timestamp":"2026-06-28 14:09:29"}
+{"level":"info","message":"::1 - GET /services/main-categories 304 2.300 ms - -","timestamp":"2026-06-28 14:09:37"}
+{"level":"info","message":"::1 - GET /admin/vendors?page=1&limit=10 304 47.554 ms - -","timestamp":"2026-06-28 14:09:45"}
+{"level":"info","message":"::1 - GET /services 304 10.336 ms - -","timestamp":"2026-06-28 14:09:54"}
+{"level":"info","message":"::1 - GET /admin/users?page=1&limit=10 304 6.428 ms - -","timestamp":"2026-06-28 14:09:55"}
+{"level":"info","message":"::1 - GET /admin/vendors/779334b3-8d41-4630-8afb-3138fb7d862c 200 10.044 ms - 2622","timestamp":"2026-06-28 14:10:05"}
+{"level":"info","message":"::1 - GET /admin/vendors/95a4a0e9-23c8-42ec-bcda-76843548e323 200 4.847 ms - 2796","timestamp":"2026-06-28 14:10:14"}
+{"level":"info","message":"::1 - GET /favicon.ico 404 1.403 ms - 150","timestamp":"2026-06-28 14:10:41"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 14:18:22"}

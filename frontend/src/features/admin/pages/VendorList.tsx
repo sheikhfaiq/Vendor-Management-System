@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../../api/adminApi';
 import { serviceApi } from '../../../api/serviceApi';
 import { Card } from '../../../components/Card/Card';
 import { Table } from '../../../components/Table/Table';
 import { Input } from '../../../components/Input/Input';
 import { Select } from '../../../components/Select/Select';
-import { Search, Eye, ChevronRight, Layers, FolderOpen, X } from 'lucide-react';
+import { Search, Eye, ChevronRight, Layers, FolderOpen, X, Pencil } from 'lucide-react';
 import { Link } from 'react-router';
-import type { MainCategory, Category, SubCategory } from '../../../types';
+import { EditVendorModal } from '../../../components/EditVendorModal/EditVendorModal';
+import { toastService } from '../../../lib/notifications/toastService';
+import { logger } from '../../../lib/utils/logger';
+import type { MainCategory, Category, SubCategory, VendorProfile } from '../../../types';
 
 const statusOptions = [
   { value: '', label: 'All Statuses' },
@@ -32,6 +35,32 @@ interface FilterTag {
 }
 
 const VendorListComponent: React.FC = () => {
+  const queryClient = useQueryClient();
+  const [editingVendor, setEditingVendor] = useState<VendorProfile | null>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
+  const editMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<VendorProfile> }) =>
+      adminApi.updateVendorProfile(id, data),
+    onSuccess: () => {
+      toastService.success('Vendor profile updated successfully');
+      queryClient.invalidateQueries({ queryKey: ['adminVendors'] });
+      queryClient.invalidateQueries({ queryKey: ['adminDashboardRecentVendors'] });
+      setIsEditOpen(false);
+      setEditingVendor(null);
+    },
+    onError: (error: any) => {
+      const errMsg = error.response?.data?.message || 'Failed to update vendor profile';
+      logger.error('Failed to update vendor profile', error);
+      toastService.error(errMsg);
+    },
+  });
+
+  const handleEditClick = useCallback((vendor: VendorProfile) => {
+    setEditingVendor(vendor);
+    setIsEditOpen(true);
+  }, []);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('');
   const [selectedScope, setSelectedScope] = useState('');
@@ -191,30 +220,68 @@ const VendorListComponent: React.FC = () => {
   const columns = useMemo(
     () => [
       {
+        key: 'vendorId',
+        label: 'Vendor ID',
+        render: (row: any) => (
+          <span className="font-mono text-xs text-slate-500 font-semibold">
+            {row.id.slice(0, 8)}
+          </span>
+        ),
+      },
+      {
         key: 'companyName',
-        label: 'Company / Owner',
+        label: 'Vendor / Contact',
         render: (row: any) => (
           <div>
-            <span className="font-bold text-slate-800 block">{row.companyName || 'Individual'}</span>
-            <span className="text-xxs text-slate-400 font-semibold">{row.ownerName}</span>
+            <span className="font-bold text-slate-800 block">{row.companyName || row.ownerName}</span>
+            <span className="text-xxs text-slate-400 font-medium">{row.phone}</span>
           </div>
+        ),
+      },
+      {
+        key: 'email',
+        label: 'Company Email',
+        render: (row: any) => (
+          <span className="text-slate-500 font-semibold">{row.user?.email || 'N/A'}</span>
+        ),
+      },
+      {
+        key: 'businessCategory',
+        label: 'Vendor Role',
+        render: (row: any) => (
+          <span className="text-slate-700 font-semibold">{row.businessCategory || 'N/A'}</span>
         ),
       },
       {
         key: 'vendorType',
         label: 'Type',
+        render: (row: any) => (
+          <span className="uppercase text-xxs font-bold text-slate-600">{row.vendorType}</span>
+        ),
       },
       {
-        key: 'contact',
-        label: 'Contact Info',
-        render: (row: any) => (
-          <div>
-            <span className="block text-xs font-semibold">{row.phone}</span>
-            <span className="text-xxs text-slate-400 font-semibold">
-              {[row.city, row.region, row.country].filter(Boolean).join(', ')}
-            </span>
-          </div>
-        ),
+        key: 'scopeOfWork',
+        label: 'Scope of Work',
+        render: (row: any) => {
+          const uniqueScopes = Array.from(
+            new Set(row.services?.flatMap((svc: any) => svc.scopes) || [])
+          );
+          return (
+            <div className="flex flex-wrap gap-1 max-w-[250px]">
+              {uniqueScopes.map((scope: string) => (
+                <span
+                  key={scope}
+                  className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-100/50"
+                >
+                  {scope.replace(/_/g, ' ')}
+                </span>
+              ))}
+              {uniqueScopes.length === 0 && (
+                <span className="text-xxs text-slate-400 italic font-medium">None</span>
+              )}
+            </div>
+          );
+        },
       },
       {
         key: 'profileCompletion',
@@ -236,7 +303,7 @@ const VendorListComponent: React.FC = () => {
         label: 'Status',
         render: (row: any) => (
           <span
-            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xxs font-semibold ${
+            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xxs font-bold ${
               row.status === 'APPROVED'
                 ? 'bg-green-50 text-green-700 border border-green-100/50'
                 : row.status === 'PENDING'
@@ -252,20 +319,30 @@ const VendorListComponent: React.FC = () => {
         key: 'actions',
         label: 'Actions',
         render: (row: any) => (
-          <Link
-            to={`/admin/vendors/${row.id}`}
-            className="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary-hover hover:underline select-none"
-          >
-            <Eye className="h-4 w-4" /> Compliance Sheet
-          </Link>
+          <div className="flex items-center gap-1.5">
+            <Link
+              to={`/admin/vendors/${row.id}`}
+              className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors inline-block"
+              title="View Complete Vendor Details"
+            >
+              <Eye className="h-4 w-4" />
+            </Link>
+            <button
+              onClick={() => handleEditClick(row)}
+              className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+              title="Edit Vendor Profile"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+          </div>
         ),
       },
     ],
-    []
+    [handleEditClick]
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 max-w-7xl mx-auto w-full">
       <div>
         <h1 className="text-xl font-bold text-slate-800 tracking-tight">Contractors Database</h1>
         <p className="text-xs text-slate-400 mt-0.5">
@@ -534,6 +611,22 @@ const VendorListComponent: React.FC = () => {
         totalPages={totalPages}
         onPageChange={setCurrentPage}
         emptyStateText="No registered contractors match the selected filter criteria."
+        dense={true}
+      />
+
+      <EditVendorModal
+        isOpen={isEditOpen}
+        onClose={() => {
+          setIsEditOpen(false);
+          setEditingVendor(null);
+        }}
+        vendor={editingVendor}
+        onSave={async (data) => {
+          if (editingVendor) {
+            await editMutation.mutateAsync({ id: editingVendor.id, data });
+          }
+        }}
+        isSaving={editMutation.isPending}
       />
     </div>
   );

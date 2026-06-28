@@ -42,6 +42,25 @@ export const adminApi = {
     return res.data.data;
   },
 
+  async updateVendorProfile(id: string, data: Partial<VendorProfile>): Promise<VendorProfile> {
+    const res = await axiosClient.put(`/admin/vendors/${id}/profile`, data);
+    return res.data.data;
+  },
+
+  async addVendorService(vendorId: string, subCategoryId: string, scopes: string[]): Promise<any> {
+    const res = await axiosClient.post(`/admin/vendors/${vendorId}/services`, { subCategoryId, scopes });
+    return res.data.data;
+  },
+
+  async updateVendorService(vendorId: string, serviceId: string, scopes: string[]): Promise<any> {
+    const res = await axiosClient.put(`/admin/vendors/${vendorId}/services/${serviceId}`, { scopes });
+    return res.data.data;
+  },
+
+  async deleteVendorService(vendorId: string, serviceId: string): Promise<void> {
+    await axiosClient.delete(`/admin/vendors/${vendorId}/services/${serviceId}`);
+  },
+
   async updateVendorStatus(id: string, status: 'PENDING' | 'APPROVED' | 'REJECTED'): Promise<VendorProfile> {
     const res = await axiosClient.patch(`/admin/vendors/${id}/status`, { status });
     return res.data.data;
@@ -49,6 +68,11 @@ export const adminApi = {
 
   async listUsers(params?: { page?: number; limit?: number }): Promise<{ data: User[]; pagination: any }> {
     const res = await axiosClient.get('/admin/users', { params });
+    return res.data.data;
+  },
+
+  async listAllDocuments(params?: { page?: number; limit?: number; vendorId?: string }): Promise<{ data: any[]; pagination: any }> {
+    const res = await axiosClient.get('/admin/documents', { params });
     return res.data.data;
   },
 

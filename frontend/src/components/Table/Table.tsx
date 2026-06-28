@@ -20,6 +20,7 @@ export interface TableProps<T> {
   onPageChange?: (page: number) => void;
   onRowClick?: (row: T) => void;
   selectedRowId?: string;
+  dense?: boolean;
 }
 
 function TableComponentInner<T>({
@@ -35,6 +36,7 @@ function TableComponentInner<T>({
   onPageChange,
   onRowClick,
   selectedRowId,
+  dense = false,
 }: TableProps<T>) {
   const handleHeaderClick = (key: string, sortable?: boolean) => {
     if (sortable && onSort) {
@@ -52,7 +54,9 @@ function TableComponentInner<T>({
                 <th
                   key={col.key}
                   onClick={() => handleHeaderClick(col.key, col.sortable)}
-                  className={`px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 ${
+                  className={`${
+                    dense ? 'px-3 py-3 text-[11px]' : 'px-6 py-4 text-xs'
+                  } font-semibold uppercase tracking-wider text-slate-500 ${
                     col.sortable ? 'cursor-pointer hover:bg-slate-100 select-none' : ''
                   }`}
                 >
@@ -73,7 +77,7 @@ function TableComponentInner<T>({
               Array.from({ length: 5 }).map((_, rIdx) => (
                 <tr key={rIdx} className="animate-pulse">
                   {columns.map((col) => (
-                    <td key={col.key} className="px-6 py-4">
+                    <td key={col.key} className={dense ? 'px-3 py-3' : 'px-6 py-4'}>
                       <div className="h-4 bg-slate-100 rounded-md w-3/4" />
                     </td>
                   ))}
@@ -101,7 +105,12 @@ function TableComponentInner<T>({
                     }`}
                   >
                     {columns.map((col) => (
-                      <td key={col.key} className="px-6 py-4 text-sm text-slate-700 whitespace-nowrap">
+                      <td
+                        key={col.key}
+                        className={`${
+                          dense ? 'px-3 py-2.5 text-xs' : 'px-6 py-4 text-sm'
+                        } text-slate-700 whitespace-nowrap`}
+                      >
                         {col.render ? col.render(row, rIdx) : (row as any)[col.key]}
                       </td>
                     ))}

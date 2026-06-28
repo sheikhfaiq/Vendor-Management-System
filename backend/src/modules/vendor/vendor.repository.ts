@@ -100,6 +100,46 @@ export class VendorRepository {
       take: limit,
     });
   }
+
+  async getDocumentsByProfileId(vendorProfileId: string) {
+    return prisma.vendorDocument.findMany({
+      where: { vendorProfileId },
+      orderBy: { uploadedAt: 'desc' },
+    });
+  }
+
+  async getDocumentById(id: string) {
+    return prisma.vendorDocument.findUnique({
+      where: { id },
+    });
+  }
+
+  async addDocument(
+    vendorProfileId: string,
+    name: string,
+    fileKey: string,
+    fileUrl: string,
+    fileSize: number,
+    mimeType: string
+  ) {
+    return prisma.vendorDocument.create({
+      data: {
+        vendorProfileId,
+        name,
+        fileKey,
+        fileUrl,
+        fileSize,
+        mimeType,
+      },
+    });
+  }
+
+  async deleteDocument(id: string) {
+    await prisma.vendorDocument.delete({
+      where: { id },
+    });
+  }
 }
 
 export const vendorRepository = new VendorRepository();
+

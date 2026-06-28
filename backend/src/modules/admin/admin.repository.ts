@@ -1,5 +1,6 @@
 import { VendorStatus } from '@prisma/client';
 import prisma from '../../config/prisma';
+import { calculateProfileCompletion } from '../../utils/profileCompletion';
 
 export class AdminRepository {
   async getDashboardStats() {
@@ -40,6 +41,7 @@ export class AdminRepository {
             role: true,
           },
         },
+        services: true,
         _count: {
           select: {
             services: true,
@@ -64,6 +66,9 @@ export class AdminRepository {
             email: true,
             role: true,
           },
+        },
+        documents: {
+          orderBy: { uploadedAt: 'desc' as const },
         },
         services: {
           include: {
@@ -122,6 +127,7 @@ export class AdminRepository {
             email: true,
           },
         },
+        services: true,
         _count: {
           select: {
             services: true,
@@ -259,6 +265,83 @@ export class AdminRepository {
 
   async countActivityLogs() {
     return prisma.activityLog.count();
+  }
+
+  async updateVendorProfile(id: string, data: any) {
+    const existing = await prisma.vendorProfile.findUnique({
+      where: { id },
+      include: {
+        services: true,
+        user: { select: { email: true } },
+      },
+    });
+
+    if (!existing) {
+      throw new Error('Vendor profile not found');
+    }
+
+    const merged = { ...existing, ...data };
+    
+    const profileCompletion = calculateProfileCompletion({
+      vendorType: merged.vendorType,
+      ownerName: merged.ownerName,
+      phone: merged.phone,
+      address: merged.address,
+      region: merged.region,
+      city: merged.city,
+      country: merged.country,
+      companyName: merged.companyName,
+      tradeLicenseNo: merged.tradeLicenseNo,
+      taxRegistrationNo: merged.taxRegistrationNo,
+      serviceCount: existing.services.length,
+    });
+
+    return prisma.vendorProfile.update({
+      where: { id },
+      data: {
+        ...data,
+        profileCompletion,
+      },
+      include: {
+        user: {
+          select: {
+            email: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getAllDocuments(skip: number, limit: number, vendorId?: string) {
+    const where = vendorId
+      ? { vendorProfile: { id: vendorId } }
+      : {};
+
+    const [docs, total] = await Promise.all([
+      prisma.vendorDocument.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { uploadedAt: 'desc' },
+        include: {
+          vendorProfile: {
+            include: {
+              user: {
+                select: { email: true },
+              },
+            },
+          },
+        },
+      }),
+      prisma.vendorDocument.count({ where }),
+    ]);
+
+    return { docs, total };
+  }
+
+  async countAllDocuments(vendorId?: string) {
+    const where = vendorId ? { vendorProfile: { id: vendorId } } : {};
+    return prisma.vendorDocument.count({ where });
   }
 }
 
