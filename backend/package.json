@@ -1,5 +1,6 @@
 {
   "name": "vms-backend",
+  "//": "refresh_cache",
   "version": "1.0.0",
   "description": "Vendor Management System Backend",
   "main": "dist/server.js",

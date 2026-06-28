@@ -475,6 +475,7 @@ async function main() {
       city: 'Abu Dhabi',
       country: 'UAE',
       status: VendorStatus.APPROVED,
+      businessCategory: 'Contractor',
       services: [
         { name: 'Bored Piles', scopes: [ScopeOfWork.DESIGN_ENGINEERING, ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION] },
         { name: 'Driven Piles', scopes: [ScopeOfWork.INSTALLATION, ScopeOfWork.TESTING_COMMISSIONING] },
@@ -495,6 +496,7 @@ async function main() {
       city: 'Sharjah',
       country: 'UAE',
       status: VendorStatus.APPROVED,
+      businessCategory: 'Contractor',
       services: [
         { name: 'Shop Drawings', scopes: [ScopeOfWork.DESIGN_ENGINEERING] },
         { name: 'Fabrication', scopes: [ScopeOfWork.SUPPLY] },
@@ -515,6 +517,7 @@ async function main() {
       city: 'Dubai',
       country: 'UAE',
       status: VendorStatus.PENDING,
+      businessCategory: 'Sub-Contractor',
       services: [
         { name: 'HVAC', scopes: [ScopeOfWork.DESIGN_ENGINEERING, ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION, ScopeOfWork.TESTING_COMMISSIONING] },
         { name: 'Central Chiller Plant', scopes: [ScopeOfWork.INSTALLATION, ScopeOfWork.TESTING_COMMISSIONING] },
@@ -535,6 +538,7 @@ async function main() {
       city: 'Dubai',
       country: 'UAE',
       status: VendorStatus.APPROVED,
+      businessCategory: 'Sub-Contractor',
       services: [
         { name: 'Structured Cabling', scopes: [ScopeOfWork.INSTALLATION] },
         { name: 'CCTV', scopes: [ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION, ScopeOfWork.TESTING_COMMISSIONING] },
@@ -554,6 +558,7 @@ async function main() {
       city: 'Jebel Ali',
       country: 'UAE',
       status: VendorStatus.APPROVED,
+      businessCategory: 'Sub-Contractor',
       services: [
         { name: 'Booster Pump Systems', scopes: [ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION, ScopeOfWork.TESTING_COMMISSIONING] },
         { name: 'Soil & Waste Systems', scopes: [ScopeOfWork.INSTALLATION] },
@@ -572,6 +577,7 @@ async function main() {
       city: 'Ras Al Khaimah',
       country: 'UAE',
       status: VendorStatus.PENDING,
+      businessCategory: 'Sub-Contractor',
       services: [
         { name: 'Curtain Walls', scopes: [ScopeOfWork.DESIGN_ENGINEERING, ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION] },
         { name: 'Stick Facade', scopes: [ScopeOfWork.INSTALLATION] },
@@ -590,6 +596,7 @@ async function main() {
       city: 'Al Ain',
       country: 'UAE',
       status: VendorStatus.APPROVED,
+      businessCategory: 'Contractor',
       services: [
         { name: 'Road Construction', scopes: [ScopeOfWork.INSTALLATION, ScopeOfWork.TESTING_COMMISSIONING] },
         { name: 'Asphalt Paving', scopes: [ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION] },
@@ -606,6 +613,7 @@ async function main() {
       city: 'Fujairah',
       country: 'UAE',
       status: VendorStatus.APPROVED,
+      businessCategory: 'Technician',
       services: [
         { name: 'Floor Finishes', scopes: [ScopeOfWork.INSTALLATION] },
         { name: 'Wall Finishes', scopes: [ScopeOfWork.INSTALLATION] },
@@ -624,6 +632,7 @@ async function main() {
       city: 'Dubai',
       country: 'UAE',
       status: VendorStatus.REJECTED,
+      businessCategory: 'Sub-Contractor',
       services: [
         { name: 'Medical Gas Systems', scopes: [ScopeOfWork.DESIGN_ENGINEERING, ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION, ScopeOfWork.TESTING_COMMISSIONING] },
         { name: 'Baggage Handling Systems', scopes: [ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION] },
@@ -642,6 +651,7 @@ async function main() {
       city: 'Sharjah',
       country: 'UAE',
       status: VendorStatus.PENDING,
+      businessCategory: 'Sub-Contractor',
       services: [
         { name: 'Shoring', scopes: [ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION] },
         { name: 'Sheet Piling', scopes: [ScopeOfWork.SUPPLY, ScopeOfWork.INSTALLATION] },
@@ -686,6 +696,7 @@ async function main() {
         country: vData.country,
         status: vData.status,
         profileCompletion: completion,
+        businessCategory: vData.businessCategory,
       },
     });
 

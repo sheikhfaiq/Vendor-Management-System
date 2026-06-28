@@ -122,32 +122,36 @@ const VendorDetailsComponent: React.FC = () => {
                 <span className="font-bold text-slate-700">{vendor.vendorType}</span>
               </div>
               <div>
+                <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Vendor Role</span>
+                <span className="font-bold text-slate-700">{vendor.businessCategory || 'N/A'}</span>
+              </div>
+              <div>
                 <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Primary Contact / Owner</span>
-                <span>{vendor.ownerName}</span>
+                <span>{vendor.ownerName || 'N/A'}</span>
               </div>
               {vendor.vendorType === 'COMPANY' && (
                 <>
                   <div>
                     <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Company Name</span>
-                    <span>{vendor.companyName}</span>
+                    <span>{vendor.companyName || 'N/A'}</span>
                   </div>
                   <div>
                     <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Trade License #</span>
                     <span className="font-mono text-slate-700 font-bold bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md">
-                      {vendor.tradeLicenseNo}
+                      {vendor.tradeLicenseNo || 'N/A'}
                     </span>
                   </div>
                   <div>
                     <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Tax TRN #</span>
                     <span className="font-mono text-slate-700 font-bold bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md">
-                      {vendor.taxRegistrationNo}
+                      {vendor.taxRegistrationNo || 'N/A'}
                     </span>
                   </div>
                 </>
               )}
               <div>
                 <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Phone</span>
-                <span>{vendor.phone}</span>
+                <span>{vendor.phone || 'N/A'}</span>
               </div>
               <div>
                 <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Website</span>
@@ -162,7 +166,9 @@ const VendorDetailsComponent: React.FC = () => {
               <div className="sm:col-span-2">
                 <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Onboarding Address</span>
                 <span>
-                  {vendor.address}, {vendor.city}, {vendor.country}
+                  {vendor.address
+                    ? `${vendor.address}, ${vendor.city}, ${vendor.country}`
+                    : 'N/A'}
                 </span>
               </div>
             </div>

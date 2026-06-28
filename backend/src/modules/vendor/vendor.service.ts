@@ -1,7 +1,7 @@
 import { vendorRepository } from './vendor.repository';
 import { serviceRepository } from '../service/service.repository';
 import { authRepository } from '../auth/auth.repository';
-import { calculateProfileCompletion } from '../../utils/profileCompletion';
+import { calculateProfileCompletion, getMissingProfileFields } from '../../utils/profileCompletion';
 import { AppError } from '../../middleware/error.middleware';
 import { ScopeOfWork } from '@prisma/client';
 
@@ -198,8 +198,22 @@ export class VendorService {
 
   async getProfileCompletion(userId: string) {
     const profile = await this.getProfileByUserId(userId);
+    const serviceCount = await vendorRepository.countServicesByVendorId(profile.id);
+    const missingFields = getMissingProfileFields({
+      vendorType: profile.vendorType,
+      ownerName: profile.ownerName,
+      phone: profile.phone,
+      address: profile.address,
+      city: profile.city,
+      country: profile.country,
+      companyName: profile.companyName,
+      tradeLicenseNo: profile.tradeLicenseNo,
+      taxRegistrationNo: profile.taxRegistrationNo,
+      serviceCount,
+    });
     return {
       completion: profile.profileCompletion,
+      missingFields,
     };
   }
 }

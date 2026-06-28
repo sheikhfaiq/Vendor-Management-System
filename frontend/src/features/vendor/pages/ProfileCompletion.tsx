@@ -25,6 +25,7 @@ const profileCompletionSchema = z
     address: z.string().min(5, 'Address must be at least 5 characters'),
     city: z.string().min(2, 'City must be at least 2 characters'),
     country: z.string().min(2, 'Country must be at least 2 characters'),
+    businessCategory: z.string().min(1, 'Vendor Role is required'),
   })
   .refine(
     (data) => {
@@ -68,6 +69,7 @@ const ProfileCompletionComponent: React.FC = () => {
       address: '',
       city: '',
       country: '',
+      businessCategory: '',
     }), []),
   });
 
@@ -80,12 +82,13 @@ const ProfileCompletionComponent: React.FC = () => {
       setValue('companyName', profile.companyName || '');
       setValue('tradeLicenseNo', profile.tradeLicenseNo || '');
       setValue('taxRegistrationNo', profile.taxRegistrationNo || '');
-      setValue('ownerName', profile.ownerName);
-      setValue('phone', profile.phone);
+      setValue('ownerName', profile.ownerName || '');
+      setValue('phone', profile.phone || '');
       setValue('website', profile.website || '');
-      setValue('address', profile.address);
-      setValue('city', profile.city);
-      setValue('country', profile.country);
+      setValue('address', profile.address || '');
+      setValue('city', profile.city || '');
+      setValue('country', profile.country || '');
+      setValue('businessCategory', profile.businessCategory || '');
     }
   }, [profile, setValue]);
 
@@ -93,7 +96,6 @@ const ProfileCompletionComponent: React.FC = () => {
     mutationFn: vendorApi.updateProfile,
     onSuccess: () => {
       toastService.success('Profile updated successfully');
-      // Invalidate queries to fetch updated values
       queryClient.invalidateQueries({ queryKey: ['vendorProfile'] });
       queryClient.invalidateQueries({ queryKey: ['vendorDashboard'] });
       queryClient.invalidateQueries({ queryKey: ['vendorProfileCompletion'] });
@@ -124,7 +126,33 @@ const ProfileCompletionComponent: React.FC = () => {
     { value: 'INDIVIDUAL', label: 'Individual / Freelancer' },
   ], []);
 
-  // Hoist all icon memos to a stable position before any conditional returns
+  const categoryOptions = useMemo(() => {
+    if (selectedVendorType === 'INDIVIDUAL') {
+      return [
+        { value: 'Engineer', label: 'Engineer' },
+        { value: 'Supervisor', label: 'Supervisor' },
+        { value: 'Forman', label: 'Forman' },
+        { value: 'Technician', label: 'Technician' },
+        { value: 'Labour', label: 'Labour' },
+      ];
+    } else {
+      return [
+        { value: 'Client/Owner', label: 'Client / Owner' },
+        { value: 'Contractor', label: 'Contractor' },
+        { value: 'Sub-Contractor', label: 'Sub-Contractor' },
+        { value: 'Consultant', label: 'Consultant' },
+      ];
+    }
+  }, [selectedVendorType]);
+
+  const companyNameLabel = useMemo(() => {
+    return selectedVendorType === 'INDIVIDUAL' ? 'Full Name' : 'Company Name';
+  }, [selectedVendorType]);
+
+  const companyNamePlaceholder = useMemo(() => {
+    return selectedVendorType === 'INDIVIDUAL' ? 'John Doe' : 'Contractor LLC';
+  }, [selectedVendorType]);
+
   const userIcon = useMemo(() => <User className="h-4 w-4" />, []);
   const buildingIcon = useMemo(() => <Building className="h-4 w-4" />, []);
   const phoneIcon = useMemo(() => <Phone className="h-4 w-4" />, []);
@@ -144,6 +172,7 @@ const ProfileCompletionComponent: React.FC = () => {
 
       <Card title="Update Registration Profile" subtitle="Your profile completion status determines bid eligibility">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+          {/* Vendor Type & Role */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Select
               {...register('vendorType')}
@@ -151,6 +180,16 @@ const ProfileCompletionComponent: React.FC = () => {
               options={vendorTypeOptions}
               error={errors.vendorType?.message}
             />
+            <Select
+              {...register('businessCategory')}
+              label="Vendor Role"
+              options={categoryOptions}
+              error={errors.businessCategory?.message}
+            />
+          </div>
+
+          {/* Owner & Company Name */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               {...register('ownerName')}
               type="text"
@@ -159,18 +198,18 @@ const ProfileCompletionComponent: React.FC = () => {
               error={errors.ownerName?.message}
               icon={userIcon}
             />
+            <Input
+              {...register('companyName')}
+              type="text"
+              label={companyNameLabel}
+              placeholder={companyNamePlaceholder}
+              error={errors.companyName?.message}
+              icon={buildingIcon}
+            />
           </div>
 
           {selectedVendorType === 'COMPANY' && (
             <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl flex flex-col gap-4">
-              <Input
-                {...register('companyName')}
-                type="text"
-                label="Company Name"
-                placeholder="Contractor LLC"
-                error={errors.companyName?.message}
-                icon={buildingIcon}
-              />
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Input
                   {...register('tradeLicenseNo')}

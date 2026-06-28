@@ -38,3 +38,36 @@ export const calculateProfileCompletion = (profile: {
 
   return Math.min(100, score);
 };
+
+export const getMissingProfileFields = (profile: {
+  vendorType: 'COMPANY' | 'INDIVIDUAL';
+  ownerName?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  city?: string | null;
+  country?: string | null;
+  companyName?: string | null;
+  tradeLicenseNo?: string | null;
+  taxRegistrationNo?: string | null;
+  serviceCount?: number;
+}): string[] => {
+  const missing: string[] = [];
+
+  if (!profile.ownerName || profile.ownerName.trim().length < 2) missing.push('ownerName');
+  if (!profile.phone || profile.phone.trim().length < 8) missing.push('phone');
+  if (!profile.address || profile.address.trim().length < 5) missing.push('address');
+  if (!profile.city || profile.city.trim().length < 2) missing.push('city');
+  if (!profile.country || profile.country.trim().length < 2) missing.push('country');
+
+  if (profile.vendorType === 'COMPANY') {
+    if (!profile.companyName || profile.companyName.trim().length === 0) missing.push('companyName');
+    if (!profile.tradeLicenseNo || profile.tradeLicenseNo.trim().length === 0) missing.push('tradeLicenseNo');
+    if (!profile.taxRegistrationNo || profile.taxRegistrationNo.trim().length === 0) missing.push('taxRegistrationNo');
+  }
+
+  if (!profile.serviceCount || profile.serviceCount === 0) {
+    missing.push('serviceSelection');
+  }
+
+  return missing;
+};

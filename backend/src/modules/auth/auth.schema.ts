@@ -5,26 +5,32 @@ export const signupSchema = z
     email: z.string().email('Invalid email address'),
     password: z.string().min(6, 'Password must be at least 6 characters long'),
     vendorType: z.enum(['COMPANY', 'INDIVIDUAL']),
-    companyName: z.string().optional().or(z.null()),
-    tradeLicenseNo: z.string().optional().or(z.null()),
-    taxRegistrationNo: z.string().optional().or(z.null()),
-    ownerName: z.string().min(2, 'Owner name must be at least 2 characters'),
-    phone: z.string().min(8, 'Phone number must be at least 8 digits'),
-    website: z.string().url('Invalid website URL').optional().or(z.literal('').or(z.null())),
-    address: z.string().min(5, 'Address must be at least 5 characters'),
-    city: z.string().min(2, 'City must be at least 2 characters'),
-    country: z.string().min(2, 'Country must be at least 2 characters'),
+    companyName: z.string().min(2, 'Company/Full name must be at least 2 characters'),
+    businessCategory: z.enum([
+      'Engineer',
+      'Supervisor',
+      'Forman',
+      'Technician',
+      'Labour',
+      'Client/Owner',
+      'Contractor',
+      'Sub-Contractor',
+      'Consultant',
+    ]),
   })
   .refine(
     (data) => {
-      if (data.vendorType === 'COMPANY') {
-        return !!data.companyName && !!data.tradeLicenseNo && !!data.taxRegistrationNo;
+      const individualOptions = ['Engineer', 'Supervisor', 'Forman', 'Technician', 'Labour'];
+      const companyOptions = ['Client/Owner', 'Contractor', 'Sub-Contractor', 'Consultant'];
+      if (data.vendorType === 'INDIVIDUAL') {
+        return individualOptions.includes(data.businessCategory);
+      } else {
+        return companyOptions.includes(data.businessCategory);
       }
-      return true;
     },
     {
-      message: 'Company name, trade license, and tax registration number are required for COMPANY type',
-      path: ['companyName'],
+      message: 'Invalid category for the selected vendor type',
+      path: ['businessCategory'],
     }
   );
 

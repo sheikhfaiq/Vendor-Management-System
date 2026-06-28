@@ -26,14 +26,7 @@ describe('Auth & Vendor Profile Integration Tests', () => {
         password: testPassword,
         vendorType: 'COMPANY',
         companyName: 'Test Tech Corp',
-        tradeLicenseNo: 'TL-12345',
-        taxRegistrationNo: 'TRN-67890',
-        ownerName: 'Alice Dev',
-        phone: '123456789',
-        website: 'https://testtech.com',
-        address: '123 Developer Lane',
-        city: 'TechCity',
-        country: 'CodeLand',
+        businessCategory: 'Contractor',
       });
 
     expect(res.status).toBe(201);
@@ -50,11 +43,8 @@ describe('Auth & Vendor Profile Integration Tests', () => {
         email: testEmail,
         password: testPassword,
         vendorType: 'INDIVIDUAL',
-        ownerName: 'Bob Dev',
-        phone: '987654321',
-        address: '456 Developer Lane',
-        city: 'TechCity',
-        country: 'CodeLand',
+        companyName: 'Bob Dev',
+        businessCategory: 'Labour',
       });
 
     expect(res.status).toBe(400);
@@ -84,7 +74,7 @@ describe('Auth & Vendor Profile Integration Tests', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.success).toBe(true);
-    expect(res.body.data.ownerName).toBe('Alice Dev');
+    expect(res.body.data.companyName).toBe('Test Tech Corp');
   });
 
   it('should retrieve profile completion percentage', async () => {

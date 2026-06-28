@@ -324,3 +324,30 @@
 {"level":"info","message":"::1 - POST /auth/refresh-token 200 60.262 ms - 505","timestamp":"2026-06-27 21:05:03"}
 {"level":"info","message":"::1 - GET /vendors/services 304 66.533 ms - -","timestamp":"2026-06-27 21:13:29"}
 {"level":"info","message":"::1 - GET /services/main-categories 304 63.448 ms - -","timestamp":"2026-06-27 21:13:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 201 320.117 ms - 737","timestamp":"2026-06-28 11:43:29"}
+{"level":"error","message":"API Error: Email address is already in use","stack":"Error: Email address is already in use\n    at AuthService.signupVendor (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.service.ts:14:13)\n    at signup (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.controller.ts:9:20)","timestamp":"2026-06-28 11:43:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 400 27.654 ms - 73","timestamp":"2026-06-28 11:43:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/login 200 85.403 ms - 1178","timestamp":"2026-06-28 11:43:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile 200 15.262 ms - 562","timestamp":"2026-06-28 11:43:29"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile/completion 200 4.828 ms - 106","timestamp":"2026-06-28 11:43:29"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:43:39"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:53:44"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:53:50"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:53:55"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:54:13"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:54:20"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:54:26"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 201 154.934 ms - 696","timestamp":"2026-06-28 11:55:28"}
+{"level":"error","message":"API Error: Email address is already in use","stack":"Error: Email address is already in use\n    at AuthService.signupVendor (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.service.ts:14:13)\n    at signup (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.controller.ts:9:20)","timestamp":"2026-06-28 11:55:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 400 25.819 ms - 73","timestamp":"2026-06-28 11:55:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/login 200 74.667 ms - 1137","timestamp":"2026-06-28 11:55:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile 200 10.705 ms - 521","timestamp":"2026-06-28 11:55:28"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile/completion 200 12.401 ms - 227","timestamp":"2026-06-28 11:55:28"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 11:58:25"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 201 245.396 ms - 696","timestamp":"2026-06-28 11:59:24"}
+{"level":"error","message":"API Error: Email address is already in use","stack":"Error: Email address is already in use\n    at AuthService.signupVendor (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.service.ts:14:13)\n    at signup (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.controller.ts:9:20)","timestamp":"2026-06-28 11:59:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 400 39.332 ms - 73","timestamp":"2026-06-28 11:59:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/login 200 71.066 ms - 1137","timestamp":"2026-06-28 11:59:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile 200 9.509 ms - 521","timestamp":"2026-06-28 11:59:24"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile/completion 200 9.133 ms - 227","timestamp":"2026-06-28 11:59:24"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-28 12:01:50"}

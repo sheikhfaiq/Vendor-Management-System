@@ -33,12 +33,13 @@ export class AuthRepository {
           companyName: vendorProfileData.companyName || null,
           tradeLicenseNo: vendorProfileData.tradeLicenseNo || null,
           taxRegistrationNo: vendorProfileData.taxRegistrationNo || null,
-          ownerName: vendorProfileData.ownerName,
-          phone: vendorProfileData.phone,
+          ownerName: vendorProfileData.ownerName || null,
+          phone: vendorProfileData.phone || null,
           website: vendorProfileData.website || null,
-          address: vendorProfileData.address,
-          city: vendorProfileData.city,
-          country: vendorProfileData.country,
+          address: vendorProfileData.address || null,
+          city: vendorProfileData.city || null,
+          country: vendorProfileData.country || null,
+          businessCategory: vendorProfileData.businessCategory || null, // classification category
           profileCompletion: vendorProfileData.profileCompletion || 0,
         },
       });

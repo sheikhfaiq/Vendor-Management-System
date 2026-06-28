@@ -19,14 +19,14 @@ export class AuthService {
     // Calculate initial profile completion percentage (services count = 0 initially)
     const initialCompletion = calculateProfileCompletion({
       vendorType: data.vendorType,
-      ownerName: data.ownerName,
-      phone: data.phone,
-      address: data.address,
-      city: data.city,
-      country: data.country,
+      ownerName: null,
+      phone: null,
+      address: null,
+      city: null,
+      country: null,
       companyName: data.companyName,
-      tradeLicenseNo: data.tradeLicenseNo,
-      taxRegistrationNo: data.taxRegistrationNo,
+      tradeLicenseNo: null,
+      taxRegistrationNo: null,
       serviceCount: 0,
     });
 
@@ -38,14 +38,15 @@ export class AuthService {
     const vendorProfileData = {
       vendorType: data.vendorType,
       companyName: data.companyName,
-      tradeLicenseNo: data.tradeLicenseNo,
-      taxRegistrationNo: data.taxRegistrationNo,
-      ownerName: data.ownerName,
-      phone: data.phone,
-      website: data.website,
-      address: data.address,
-      city: data.city,
-      country: data.country,
+      tradeLicenseNo: null,
+      taxRegistrationNo: null,
+      ownerName: null,
+      phone: null,
+      website: null,
+      address: null,
+      city: null,
+      country: null,
+      businessCategory: data.businessCategory,
       profileCompletion: initialCompletion,
     };
 

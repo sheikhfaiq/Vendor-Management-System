@@ -90,8 +90,12 @@ const ProfileComponent: React.FC = () => {
               <span>{user.vendorProfile.vendorType}</span>
             </div>
             <div>
+              <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Vendor Role</span>
+              <span>{user.vendorProfile.businessCategory || 'N/A'}</span>
+            </div>
+            <div>
               <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Owner Name</span>
-              <span>{user.vendorProfile.ownerName}</span>
+              <span>{user.vendorProfile.ownerName || 'N/A'}</span>
             </div>
             {user.vendorProfile.vendorType === 'COMPANY' && (
               <>
@@ -107,7 +111,7 @@ const ProfileComponent: React.FC = () => {
             )}
             <div>
               <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Phone</span>
-              <span>{user.vendorProfile.phone}</span>
+              <span>{user.vendorProfile.phone || 'N/A'}</span>
             </div>
             <div>
               <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Website</span>
@@ -116,7 +120,9 @@ const ProfileComponent: React.FC = () => {
             <div className="sm:col-span-2">
               <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Registered Address</span>
               <span>
-                {user.vendorProfile.address}, {user.vendorProfile.city}, {user.vendorProfile.country}
+                {user.vendorProfile.address
+                  ? `${user.vendorProfile.address}, ${user.vendorProfile.city}, ${user.vendorProfile.country}`
+                  : 'N/A'}
               </span>
             </div>
           </div>

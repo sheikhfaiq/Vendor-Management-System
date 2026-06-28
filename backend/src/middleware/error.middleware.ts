@@ -43,6 +43,7 @@ export const errorHandler = (
     });
   }
 
+  // Handle Prisma Known Request Errors (e.g. database constraints)
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === 'P2002') {
       const target = (err.meta?.target as string[])?.join(', ') || 'field';

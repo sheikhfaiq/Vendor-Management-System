@@ -51,12 +51,13 @@ model VendorProfile {
   companyName       String? // Required only if COMPANY
   tradeLicenseNo    String? // Required only if COMPANY
   taxRegistrationNo String? // Required only if COMPANY
-  ownerName         String
-  phone             String
+  ownerName         String?
+  phone             String?
   website           String?
-  address           String
-  city              String
-  country           String
+  address           String?
+  city              String?
+  country           String?
+  businessCategory  String?
   status            VendorStatus    @default(PENDING)
   profileCompletion Int             @default(0)
   createdAt         DateTime        @default(now())

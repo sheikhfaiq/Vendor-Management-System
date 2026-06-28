@@ -24,12 +24,13 @@ export interface VendorProfile {
   companyName: string | null;
   tradeLicenseNo: string | null;
   taxRegistrationNo: string | null;
-  ownerName: string;
-  phone: string;
+  ownerName: string | null;
+  phone: string | null;
   website: string | null;
-  address: string;
-  city: string;
-  country: string;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  businessCategory: string | null;
   status: VendorStatus;
   profileCompletion: number;
   createdAt: string;

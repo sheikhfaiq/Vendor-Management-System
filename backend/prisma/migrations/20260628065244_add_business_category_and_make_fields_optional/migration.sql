@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "VendorProfile" ADD COLUMN     "businessCategory" TEXT,
+ALTER COLUMN "ownerName" DROP NOT NULL,
+ALTER COLUMN "phone" DROP NOT NULL,
+ALTER COLUMN "address" DROP NOT NULL,
+ALTER COLUMN "city" DROP NOT NULL,
+ALTER COLUMN "country" DROP NOT NULL;
