@@ -26,9 +26,23 @@ export class AuthRepository {
         },
       });
 
+      const lastVendor = await tx.vendorProfile.findFirst({
+        where: { vendorCode: { startsWith: 'KSA-' } },
+        orderBy: { createdAt: 'desc' },
+      });
+      let nextNumber = 1;
+      if (lastVendor && lastVendor.vendorCode) {
+        const match = lastVendor.vendorCode.match(/KSA-(\d+)/);
+        if (match) {
+          nextNumber = parseInt(match[1], 10) + 1;
+        }
+      }
+      const vendorCode = `KSA-${String(nextNumber).padStart(4, '0')}`;
+
       const profile = await tx.vendorProfile.create({
         data: {
           userId: user.id,
+          vendorCode,
           vendorType: vendorProfileData.vendorType,
           companyName: vendorProfileData.companyName || null,
           tradeLicenseNo: vendorProfileData.tradeLicenseNo || null,

@@ -345,7 +345,14 @@ const ProfileCompletionComponent: React.FC = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Onboarding Profile Info</h1>
+        <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+          Onboarding Profile Info
+          {profile?.vendorCode && (
+            <span className="font-mono text-xs text-slate-500 font-bold bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md select-none">
+              {profile.vendorCode}
+            </span>
+          )}
+        </h1>
         <p className="text-sm text-slate-400 mt-1">
           Provide accurate documentation and contact details for compliance review in Saudi Arabia
         </p>

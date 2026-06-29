@@ -61,6 +61,10 @@ const DashboardLayoutComponent: React.FC = () => {
     return currentStatus === 'PENDING';
   }, [role, profile, user, isLoadingProfile]);
 
+  const vendorCode = useMemo(() => {
+    return profile?.vendorCode || user?.vendorProfile?.vendorCode || null;
+  }, [profile, user]);
+
   useEffect(() => {
     if (isPendingApproval) {
       if (!toastIdRef.current) {
@@ -477,8 +481,12 @@ const DashboardLayoutComponent: React.FC = () => {
 
             <div className="text-right hidden sm:block">
               <p className="text-xs font-bold text-slate-800">{user?.email}</p>
-              <p className="text-xxs text-slate-400 capitalize font-medium">
-                {role.toLowerCase()} Account
+              <p className="text-xxs text-slate-500 font-semibold mt-0.5 select-none font-mono">
+                {role === 'VENDOR' ? (
+                  vendorCode || ''
+                ) : (
+                  <span className="capitalize font-sans text-slate-400 font-medium">{role.toLowerCase()} Account</span>
+                )}
               </p>
             </div>
             <div className="h-9 w-9 rounded-full bg-slate-100 flex items-center justify-center font-bold text-primary text-sm border border-slate-200">

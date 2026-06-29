@@ -182,8 +182,13 @@ const VendorDetailsComponent: React.FC = () => {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-slate-800 tracking-tight">
+          <h1 className="text-xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
             {vendor.companyName || vendor.ownerName}
+            {vendor.vendorCode && (
+              <span className="font-mono text-xs text-slate-500 font-bold bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md select-none">
+                {vendor.vendorCode}
+              </span>
+            )}
           </h1>
           <p className="text-xs text-slate-400 mt-0.5">
             Registered: {new Date(vendor.createdAt).toLocaleDateString()} | Compliance profile file
@@ -218,6 +223,12 @@ const VendorDetailsComponent: React.FC = () => {
         <div className="md:col-span-2 flex flex-col gap-6">
           <Card title="Contractor Profile Details" subtitle="Onboarding credentials and license metadata">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm text-slate-600">
+              <div>
+                <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Vendor ID</span>
+                <span className="font-mono text-slate-700 font-bold bg-slate-50 border border-slate-100 px-2 py-0.5 rounded-md select-none">
+                  {vendor.vendorCode || 'N/A'}
+                </span>
+              </div>
               <div>
                 <span className="font-semibold block text-xs uppercase tracking-wider text-slate-400">Vendor Type</span>
                 <span className="font-bold text-slate-700">{vendor.vendorType}</span>

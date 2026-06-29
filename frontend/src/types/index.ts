@@ -20,6 +20,7 @@ export interface User {
 export interface VendorProfile {
   id: string;
   userId: string;
+  vendorCode?: string | null;
   vendorType: VendorType;
   companyName: string | null;
   tradeLicenseNo: string | null;

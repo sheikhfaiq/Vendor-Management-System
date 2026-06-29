@@ -48,4 +48,45 @@ app.use('/notifications', notificationRoutes);
 // Global centralized error handler
 app.use(errorHandler as any);
 
+// Auto-populate missing vendor codes for backward compatibility
+import prisma from './config/prisma';
+async function populateMissingVendorCodes() {
+  try {
+    const vendors = await prisma.vendorProfile.findMany({
+      where: { vendorCode: null },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    if (vendors.length === 0) return;
+
+    // Find the highest existing code
+    const lastVendor = await prisma.vendorProfile.findFirst({
+      where: { vendorCode: { startsWith: 'KSA-', not: null } },
+      orderBy: { vendorCode: 'desc' },
+    });
+
+    let nextNumber = 1;
+    if (lastVendor && lastVendor.vendorCode) {
+      const match = lastVendor.vendorCode.match(/KSA-(\d+)/);
+      if (match) {
+        nextNumber = parseInt(match[1], 10) + 1;
+      }
+    }
+
+    for (const vendor of vendors) {
+      const vendorCode = `KSA-${String(nextNumber).padStart(4, '0')}`;
+      await prisma.vendorProfile.update({
+        where: { id: vendor.id },
+        data: { vendorCode },
+      });
+      nextNumber++;
+    }
+    console.log(`Successfully populated ${vendors.length} missing vendor codes.`);
+  } catch (err) {
+    console.error('Error populating vendor codes on startup:', err);
+  }
+}
+
+populateMissingVendorCodes();
+
 export default app;

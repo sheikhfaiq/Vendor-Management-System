@@ -223,8 +223,8 @@ const VendorListComponent: React.FC = () => {
         key: 'vendorId',
         label: 'Vendor ID',
         render: (row: any) => (
-          <span className="font-mono text-xs text-slate-500 font-semibold">
-            {row.id.slice(0, 8)}
+          <span className="font-mono text-xs text-slate-700 font-bold bg-slate-50 border border-slate-100 px-1.5 py-0.5 rounded">
+            {row.vendorCode || 'N/A'}
           </span>
         ),
       },

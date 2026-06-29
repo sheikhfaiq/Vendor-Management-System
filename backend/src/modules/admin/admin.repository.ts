@@ -236,6 +236,7 @@ export class AdminRepository {
         vendorProfile: {
           select: {
             id: true,
+            vendorCode: true,
             companyName: true,
             ownerName: true,
             status: true,

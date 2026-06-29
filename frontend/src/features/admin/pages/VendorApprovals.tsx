@@ -70,7 +70,12 @@ export const VendorApprovals: React.FC = () => {
             <span className="font-bold text-slate-800 tracking-tight">
               {row.companyName || row.ownerName || 'N/A'}
             </span>
-            <span className="text-xxs text-slate-400 font-mono">{row.user?.email}</span>
+            <span className="text-xxs text-slate-400 font-mono">
+              {row.vendorCode ? (
+                <span className="text-primary font-bold mr-1">{row.vendorCode}</span>
+              ) : null}
+              {row.vendorCode ? '| ' : ''}{row.user?.email}
+            </span>
           </div>
         ),
       },

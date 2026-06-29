@@ -47,6 +47,7 @@ model VendorProfile {
   id                String          @id @default(uuid())
   userId            String          @unique
   user              User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendorCode        String?         @unique
   vendorType        VendorType      @default(COMPANY)
   companyName       String? // Required only if COMPANY
   tradeLicenseNo    String? // Required only if COMPANY
