@@ -8,7 +8,7 @@ import { Button } from '../../../components/Button/Button';
 import { Modal } from '../../../components/Modal/Modal';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
-import { ArrowLeft, Check, X, ExternalLink, Pencil, Plus, Trash2, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Check, X, ExternalLink, Pencil, Plus, Trash2, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { EditVendorModal } from '../../../components/EditVendorModal/EditVendorModal';
 import { AddServiceModal } from '../../../components/AddServiceModal/AddServiceModal';
 import { EditServiceScopesModal } from '../../../components/EditServiceScopesModal/EditServiceScopesModal';
@@ -37,6 +37,9 @@ const VendorDetailsComponent: React.FC = () => {
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<'APPROVED' | 'REJECTED' | null>(null);
+  const [isDocConfirmOpen, setIsDocConfirmOpen] = useState(false);
+  const [docIdToVerify, setDocIdToVerify] = useState<string | null>(null);
+  const [docNameToVerify, setDocNameToVerify] = useState<string | null>(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
   const [isAddServiceOpen, setIsAddServiceOpen] = useState(false);
@@ -390,9 +393,9 @@ const VendorDetailsComponent: React.FC = () => {
                                 </a>
                                 <button
                                   onClick={() => {
-                                    if (window.confirm('Are you sure you want to verify this document? The local file will be permanently deleted to save server storage space.')) {
-                                      verifyMutation.mutate(doc.id);
-                                    }
+                                    setDocIdToVerify(doc.id);
+                                    setDocNameToVerify(doc.name);
+                                    setIsDocConfirmOpen(true);
                                   }}
                                   disabled={verifyMutation.isPending}
                                   className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-md cursor-pointer transition-colors disabled:opacity-50"
@@ -532,6 +535,58 @@ const VendorDetailsComponent: React.FC = () => {
         }}
         isSaving={updateServiceMutation.isPending}
       />
+      <Modal
+        isOpen={isDocConfirmOpen}
+        onClose={() => {
+          setIsDocConfirmOpen(false);
+          setDocIdToVerify(null);
+          setDocNameToVerify(null);
+        }}
+        title="Confirm Document Verification"
+        size="sm"
+        footer={
+          <div className="flex items-center justify-end gap-2.5 w-full">
+            <button
+              onClick={() => {
+                setIsDocConfirmOpen(false);
+                setDocIdToVerify(null);
+                setDocNameToVerify(null);
+              }}
+              className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-150 rounded-lg transition-colors cursor-pointer select-none"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                if (docIdToVerify) {
+                  verifyMutation.mutate(docIdToVerify);
+                  setIsDocConfirmOpen(false);
+                  setDocIdToVerify(null);
+                  setDocNameToVerify(null);
+                }
+              }}
+              disabled={verifyMutation.isPending}
+              className="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors cursor-pointer select-none disabled:opacity-50 flex items-center gap-1.5"
+            >
+              <ShieldCheck className="h-4 w-4" /> Yes, Verify
+            </button>
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <div className="h-10 w-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 shrink-0">
+            <AlertTriangle className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-800">
+              Verify {docNameToVerify || 'Document'}?
+            </p>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Are you sure you want to verify this document? The local certificate file will be **permanently deleted** from the disk to save server storage space. This action cannot be undone.
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

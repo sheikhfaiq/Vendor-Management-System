@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../../api/adminApi';
 import { Loader } from '../../../components/Loader/Loader';
 import { toastService } from '../../../lib/notifications/toastService';
+import { Modal } from '../../../components/Modal/Modal';
 import {
   FileText,
   ExternalLink,
@@ -13,6 +14,7 @@ import {
   Calendar,
   Check,
   ShieldCheck,
+  AlertTriangle,
 } from 'lucide-react';
 
 const DOC_TYPE_COLORS: Record<string, string> = {
@@ -26,6 +28,9 @@ const DOC_TYPE_COLORS: Record<string, string> = {
 const VendorDocumentsComponent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [docToVerify, setDocToVerify] = useState<string | null>(null);
+  const [docNameToVerify, setDocNameToVerify] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const limit = 20;
@@ -271,9 +276,9 @@ const VendorDocumentsComponent: React.FC = () => {
                                 </a>
                                 <button
                                   onClick={() => {
-                                    if (window.confirm('Are you sure you want to verify this document? The local file will be permanently deleted to save server storage space.')) {
-                                      verifyMutation.mutate(doc.id);
-                                    }
+                                    setDocToVerify(doc.id);
+                                    setDocNameToVerify(doc.name);
+                                    setIsConfirmOpen(true);
                                   }}
                                   disabled={verifyMutation.isPending}
                                   className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg transition-colors select-none cursor-pointer disabled:opacity-50"
@@ -335,6 +340,59 @@ const VendorDocumentsComponent: React.FC = () => {
           </>
         )}
       </div>
+
+      <Modal
+        isOpen={isConfirmOpen}
+        onClose={() => {
+          setIsConfirmOpen(false);
+          setDocToVerify(null);
+          setDocNameToVerify(null);
+        }}
+        title="Confirm Document Verification"
+        size="sm"
+        footer={
+          <div className="flex items-center justify-end gap-2.5 w-full">
+            <button
+              onClick={() => {
+                setIsConfirmOpen(false);
+                setDocToVerify(null);
+                setDocNameToVerify(null);
+              }}
+              className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-700 bg-slate-100 hover:bg-slate-150 rounded-lg transition-colors cursor-pointer select-none"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                if (docToVerify) {
+                  verifyMutation.mutate(docToVerify);
+                  setIsConfirmOpen(false);
+                  setDocToVerify(null);
+                  setDocNameToVerify(null);
+                }
+              }}
+              disabled={verifyMutation.isPending}
+              className="px-4 py-2 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg transition-colors cursor-pointer select-none disabled:opacity-50 flex items-center gap-1.5"
+            >
+              <ShieldCheck className="h-4 w-4" /> Yes, Verify
+            </button>
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <div className="h-10 w-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 shrink-0">
+            <AlertTriangle className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-slate-800">
+              Verify {docNameToVerify || 'Document'}?
+            </p>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Are you sure you want to verify this document? The local certificate file will be **permanently deleted** from the disk to save server storage space. This action cannot be undone.
+            </p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
