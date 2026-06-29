@@ -185,6 +185,47 @@ export class VendorController {
       next(error);
     }
   }
+
+  async getProducts(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const products = await vendorService.getProducts(userId);
+      sendSuccess(res, 'Products retrieved successfully', products);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addProduct(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const product = await vendorService.addProduct(
+        userId,
+        req.body,
+        req.ip,
+        req.headers['user-agent'] as string
+      );
+      sendSuccess(res, 'Product added successfully', product);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteProduct(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const { id } = req.params;
+      await vendorService.deleteProduct(
+        userId,
+        id,
+        req.ip,
+        req.headers['user-agent'] as string
+      );
+      sendSuccess(res, 'Product deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const vendorController = new VendorController();

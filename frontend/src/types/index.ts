@@ -44,6 +44,7 @@ export interface VendorProfile {
     role: string;
   };
   documents?: VendorDocument[];
+  products?: any[];
 
   // Custom Individual Vendor fields
   assetName: string | null;

@@ -1249,3 +1249,13 @@
 {"level":"info","message":"::1 - GET /admin/dashboard 304 159.185 ms - -","timestamp":"2026-06-29 15:57:11"}
 {"level":"info","message":"::1 - GET /notifications 304 3.458 ms - -","timestamp":"2026-06-29 15:57:26"}
 {"level":"info","message":"::1 - GET /vendors/profile 304 12.415 ms - -","timestamp":"2026-06-29 15:57:26"}
+{"level":"info","message":"::1 - GET /notifications 304 15.065 ms - -","timestamp":"2026-06-29 15:59:46"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 6.409 ms - -","timestamp":"2026-06-29 15:59:46"}
+{"level":"info","message":"::1 - GET /notifications 304 5.343 ms - -","timestamp":"2026-06-29 15:59:51"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 14.839 ms - -","timestamp":"2026-06-29 15:59:51"}
+{"level":"info","message":"::1 - GET /notifications 304 5.148 ms - -","timestamp":"2026-06-29 15:59:56"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 8.449 ms - -","timestamp":"2026-06-29 15:59:56"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-29 16:02:45"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-29 16:03:06"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-29 16:04:48"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-29 16:05:09"}

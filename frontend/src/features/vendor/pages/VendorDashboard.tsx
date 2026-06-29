@@ -37,6 +37,16 @@ const VendorDashboardComponent: React.FC = () => {
     queryFn: vendorApi.getProfile,
   });
 
+  const { data: myServices = [], isLoading: isLoadingServices } = useQuery({
+    queryKey: ['myServices'],
+    queryFn: vendorApi.getServices,
+  });
+
+  const { data: products = [], isLoading: isLoadingProducts } = useQuery({
+    queryKey: ['vendorProducts'],
+    queryFn: vendorApi.getProducts,
+  });
+
   const submitMutation = useMutation({
     mutationFn: vendorApi.submitProfile,
     onSuccess: () => {
@@ -66,7 +76,7 @@ const VendorDashboardComponent: React.FC = () => {
     }));
   }, [dashboard?.recentActivities]);
 
-  if (isLoadingDashboard || isLoadingDocs || isLoadingProfile) return <Loader />;
+  if (isLoadingDashboard || isLoadingDocs || isLoadingProfile || isLoadingServices || isLoadingProducts) return <Loader />;
 
   const status = dashboard?.profile?.status || 'PENDING';
   const isSubmitted = dashboard?.profile?.isSubmitted || false;
@@ -92,11 +102,15 @@ const VendorDashboardComponent: React.FC = () => {
     'Chamber of Commerce',
     'Zakat Certificate',
   ];
-  const uploadedDocTypes = documents.map((d) => d.name);
+  const uploadedDocTypes = documents.map((d: any) => d.name);
   const uploadedCount = requiredDocTypes.filter((type) => uploadedDocTypes.includes(type)).length;
   const isDocumentsComplete = uploadedCount === 6;
 
-  const isAllComplete = isDetailsComplete && isServicesComplete && isDocumentsComplete;
+  // Check if SUPPLY scope is selected
+  const hasSupplyScope = myServices.some((s: any) => s.scopes?.includes('SUPPLY'));
+  const isProductsComplete = !hasSupplyScope || products.length > 0;
+
+  const isAllComplete = isDetailsComplete && isServicesComplete && isDocumentsComplete && isProductsComplete;
 
   const statusConfigs = {
     APPROVED: {
@@ -212,10 +226,29 @@ const VendorDashboardComponent: React.FC = () => {
                 </div>
                 {!isSubmitted && (
                   <Link to="/vendor/documents" className="text-xxs font-bold text-primary hover:underline shrink-0">
-                    {isDocumentsComplete ? 'Manage' : 'Upload Docs'}
+                    {isDocumentsComplete ? 'Edit' : 'Upload Docs'}
                   </Link>
                 )}
               </div>
+
+              {/* Stage 4 (Conditional) */}
+              {hasSupplyScope && (
+                <div className="flex items-center justify-between p-2.5 rounded-lg border border-slate-100 bg-white">
+                  <div className="flex items-center gap-2">
+                    {products.length > 0 ? (
+                      <CheckCircle2 className="h-4.5 w-4.5 text-green-600 shrink-0" />
+                    ) : (
+                      <Clock className="h-4.5 w-4.5 text-amber-500 shrink-0" />
+                    )}
+                    <span className="text-xs font-semibold text-slate-700">4. Product Catalog ({products.length} uploaded)</span>
+                  </div>
+                  {!isSubmitted && (
+                    <Link to="/vendor/products" className="text-xxs font-bold text-primary hover:underline shrink-0">
+                      {products.length > 0 ? 'Manage' : 'Upload Products'}
+                    </Link>
+                  )}
+                </div>
+              )}
             </div>
 
             {isAllComplete && !isSubmitted ? (

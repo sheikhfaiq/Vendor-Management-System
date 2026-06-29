@@ -73,6 +73,7 @@ export class AdminRepository {
         documents: {
           orderBy: { uploadedAt: 'desc' as const },
         },
+        products: true,
         services: {
           include: {
             subCategory: {

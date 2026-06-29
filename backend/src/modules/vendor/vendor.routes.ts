@@ -32,4 +32,9 @@ router.delete('/documents/:id', vendorController.deleteDocument as any);
 router.put('/documents/local-upload-mock', vendorController.localUploadMock as any);
 router.post('/profile/submit', vendorController.submitProfile as any);
 
+// Product management routes
+router.get('/products', vendorController.getProducts as any);
+router.post('/products', vendorController.addProduct as any);
+router.delete('/products/:id', vendorController.deleteProduct as any);
+
 export default router;

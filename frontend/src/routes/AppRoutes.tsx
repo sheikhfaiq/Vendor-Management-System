@@ -25,6 +25,7 @@ const VendorDashboard = lazy(() => import('../features/vendor/pages/VendorDashbo
 const ProfileCompletion = lazy(() => import('../features/vendor/pages/ProfileCompletion'));
 const MyServices = lazy(() => import('../features/vendor/pages/MyServices'));
 const MyDocuments = lazy(() => import('../features/vendor/pages/MyDocuments'));
+const MyProducts = lazy(() => import('../features/vendor/pages/MyProducts'));
 
 // Protected Pages (Admin)
 const AdminDashboard = lazy(() => import('../features/admin/pages/AdminDashboard'));
@@ -76,6 +77,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/vendor/profile-completion" element={<ProfileCompletion />} />
           <Route path="/vendor/services" element={<MyServices />} />
           <Route path="/vendor/documents" element={<MyDocuments />} />
+          <Route path="/vendor/products" element={<MyProducts />} />
         </Route>
 
         {/* Protected Admin Routes */}

@@ -254,15 +254,7 @@ const MyServicesComponent: React.FC = () => {
     (subCat: SubCategory) => {
       if (isAlreadyRegistered(subCat.id) || isPending(subCat.id)) return;
       
-      const permitted = profile?.vendorType === 'INDIVIDUAL' 
-        ? getPermittedScopes(profile.businessCategory) 
-        : ['SUPPLY', 'INSTALLATION'];
-      
-      const defaultOptions = ['SUPPLY', 'INSTALLATION'];
-      let initialScopes = defaultOptions.filter(s => permitted.includes(s)) as ScopeOfWork[];
-      if (initialScopes.length === 0 && permitted.length > 0) {
-        initialScopes = [permitted[0] as ScopeOfWork];
-      }
+      const initialScopes: ScopeOfWork[] = [];
 
       setPendingServices((prev) => [
         ...prev,

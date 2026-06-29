@@ -154,6 +154,39 @@ export class VendorRepository {
       where: { id },
     });
   }
+
+  async getProducts(vendorProfileId: string) {
+    return prisma.product.findMany({
+      where: { vendorProfileId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async createProduct(vendorProfileId: string, data: { name: string; brand?: string; description?: string }) {
+    return prisma.product.create({
+      data: {
+        vendorProfileId,
+        name: data.name,
+        brand: data.brand || null,
+        description: data.description || null,
+      },
+    });
+  }
+
+  async deleteProduct(id: string, vendorProfileId: string) {
+    return prisma.product.delete({
+      where: {
+        id,
+        vendorProfileId,
+      },
+    });
+  }
+
+  async countProducts(vendorProfileId: string) {
+    return prisma.product.count({
+      where: { vendorProfileId },
+    });
+  }
 }
 
 export const vendorRepository = new VendorRepository();

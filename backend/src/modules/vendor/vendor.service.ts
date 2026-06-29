@@ -435,6 +435,16 @@ export class VendorService {
   async submitProfile(userId: string, ip?: string, userAgent?: string) {
     const profile = await this.getProfileByUserId(userId);
     
+    // Check if SUPPLY scope is selected, and enforce at least one product
+    const services = await vendorRepository.getServicesByVendorId(profile.id);
+    const hasSupplyScope = services.some((s: any) => s.scopes.includes('SUPPLY'));
+    if (hasSupplyScope) {
+      const productCount = await vendorRepository.countProducts(profile.id);
+      if (productCount === 0) {
+        throw new AppError('At least one product must be uploaded when the "Supply" scope is selected.', 400);
+      }
+    }
+
     const updatedProfile = await vendorRepository.updateProfile(userId, {
       isSubmitted: true,
       status: 'PENDING',
@@ -455,6 +465,56 @@ export class VendorService {
     );
 
     return updatedProfile;
+  }
+
+  async getProducts(userId: string) {
+    const profile = await this.getProfileByUserId(userId);
+    return vendorRepository.getProducts(profile.id);
+  }
+
+  async addProduct(
+    userId: string,
+    data: { name: string; brand?: string; description?: string },
+    ip?: string,
+    userAgent?: string
+  ) {
+    const profile = await this.getProfileByUserId(userId);
+    if (profile.isSubmitted && profile.status !== 'APPROVED') {
+      throw new AppError('Action forbidden. Profile is currently locked under compliance review.', 403);
+    }
+
+    if (!data.name || data.name.trim().length === 0) {
+      throw new AppError('Product Name is required.', 400);
+    }
+
+    const product = await vendorRepository.createProduct(profile.id, data);
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_PRODUCT_ADD',
+      `Added product: ${product.name} (Brand: ${product.brand || 'N/A'})`,
+      ip,
+      userAgent
+    );
+
+    return product;
+  }
+
+  async deleteProduct(userId: string, productId: string, ip?: string, userAgent?: string) {
+    const profile = await this.getProfileByUserId(userId);
+    if (profile.isSubmitted && profile.status !== 'APPROVED') {
+      throw new AppError('Action forbidden. Profile is currently locked under compliance review.', 403);
+    }
+
+    const product = await vendorRepository.deleteProduct(productId, profile.id);
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_PRODUCT_DELETE',
+      `Deleted product: ${product.name}`,
+      ip,
+      userAgent
+    );
   }
 
   async saveLocalFile(fileKey: string, buffer: Buffer) {

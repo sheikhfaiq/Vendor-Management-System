@@ -424,6 +424,30 @@ const VendorDetailsComponent: React.FC = () => {
               </div>
             )}
           </Card>
+
+          <Card title="Product Catalog" subtitle="Materials and machinery supplied by this contractor">
+            {!vendor.products || vendor.products.length === 0 ? (
+              <p className="text-xs text-slate-400 italic py-4 text-center">No products registered by this vendor.</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {vendor.products.map((prod: any) => (
+                  <div key={prod.id} className="p-3 rounded-lg border border-slate-100 bg-white flex flex-col gap-1 shadow-xs">
+                    <span className="font-bold text-slate-800 text-xs">{prod.name}</span>
+                    {prod.brand && (
+                      <span className="inline-block mt-0.5 text-[9px] font-bold uppercase text-slate-450">
+                        Brand: {prod.brand}
+                      </span>
+                    )}
+                    {prod.description && (
+                      <p className="text-xxs text-slate-500 font-medium leading-relaxed mt-1 break-words">
+                        {prod.description}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
         </div>
 
         {/* Action card */}

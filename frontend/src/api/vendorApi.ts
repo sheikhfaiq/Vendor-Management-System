@@ -75,4 +75,18 @@ export const vendorApi = {
   async submitProfile(): Promise<void> {
     await axiosClient.post('/vendors/profile/submit');
   },
+
+  async getProducts(): Promise<any[]> {
+    const res = await axiosClient.get('/vendors/products');
+    return res.data.data;
+  },
+
+  async addProduct(data: { name: string; brand?: string; description?: string }): Promise<any> {
+    const res = await axiosClient.post('/vendors/products', data);
+    return res.data.data;
+  },
+
+  async deleteProduct(id: string): Promise<void> {
+    await axiosClient.delete(`/vendors/products/${id}`);
+  },
 };
