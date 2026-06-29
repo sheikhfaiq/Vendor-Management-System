@@ -141,6 +141,11 @@ const MyServicesComponent: React.FC = () => {
     queryFn: serviceApi.getMainCategories,
   });
 
+  const { data: products = [] } = useQuery({
+    queryKey: ['vendorProducts'],
+    queryFn: vendorApi.getProducts,
+  });
+
   const isLocked = !profile || profile.status !== 'APPROVED';
 
   const { data: categoriesMap, isLoading: _loadingCats } = useQuery({
@@ -275,6 +280,10 @@ const MyServicesComponent: React.FC = () => {
   }, []);
 
   const updatePendingScopes = useCallback((subCatId: string, scope: ScopeOfWork, checked: boolean) => {
+    if (scope === 'SUPPLY' && checked && (!products || products.length === 0)) {
+      toastService.error('You must add at least one product to your catalog before registering a Supply scope of work.');
+      return;
+    }
     setPendingServices((prev) =>
       prev.map((p) => {
         if (p.subCategoryId !== subCatId) return p;
@@ -284,7 +293,7 @@ const MyServicesComponent: React.FC = () => {
         return { ...p, scopes: newScopes };
       })
     );
-  }, []);
+  }, [products]);
 
   // Submit all pending services in sequence
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -328,10 +337,14 @@ const MyServicesComponent: React.FC = () => {
   }, [isLocked]);
 
   const handleEditScopeChange = useCallback((scope: ScopeOfWork, checked: boolean) => {
+    if (scope === 'SUPPLY' && checked && (!products || products.length === 0)) {
+      toastService.error('You must add at least one product to your catalog before registering a Supply scope of work.');
+      return;
+    }
     setEditScopes((prev) =>
       checked ? [...prev, scope] : prev.filter((s) => s !== scope)
     );
-  }, []);
+  }, [products]);
 
   const handleEditSubmit = useCallback(() => {
     if (editScopes.length === 0) {

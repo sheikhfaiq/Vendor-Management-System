@@ -7,7 +7,7 @@ import { Input } from '../Input/Input';
 import { Select } from '../Select/Select';
 import { Button } from '../Button/Button';
 import { SearchableSelect } from '../SearchableSelect/SearchableSelect';
-import { SAUDI_REGIONS, SAUDI_CITIES_BY_REGION } from '../../constants/saudiGeography';
+import { SAUDI_REGIONS, SAUDI_CITIES_BY_REGION, COUNTRY_OPTIONS } from '../../constants/saudiGeography';
 import type { VendorProfile } from '../../types';
 
 const editProfileSchema = z
@@ -432,10 +432,10 @@ export const EditVendorModal: React.FC<EditVendorModalProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Input
+          <Select
             {...register('country')}
             label="Country *"
-            placeholder="Country"
+            options={COUNTRY_OPTIONS}
             error={errors.country?.message}
           />
           <Controller

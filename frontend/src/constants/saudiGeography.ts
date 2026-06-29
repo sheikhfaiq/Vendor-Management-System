@@ -8,101 +8,125 @@ export interface CityOption {
   label: string;
 }
 
+export interface CountryOption {
+  value: string;
+  label: string;
+}
+
+export const COUNTRY_OPTIONS: CountryOption[] = [
+  { value: 'Saudi Arabia', label: 'Saudi Arabia (KSA)' },
+  { value: 'United Arab Emirates', label: 'United Arab Emirates' },
+  { value: 'Bahrain', label: 'Bahrain' },
+  { value: 'Kuwait', label: 'Kuwait' },
+  { value: 'Oman', label: 'Oman' },
+  { value: 'Qatar', label: 'Qatar' },
+];
+
 export const SAUDI_REGIONS: RegionOption[] = [
-  { value: 'Riyadh', label: 'Riyadh (الرياض)' },
-  { value: 'Makkah', label: 'Makkah (مكة المكرمة)' },
-  { value: 'Eastern Province', label: 'Eastern Province (المنطقة الشرقية)' },
-  { value: 'Madinah', label: 'Madinah (المدينة المنورة)' },
-  { value: 'Al-Qassim', label: 'Al-Qassim (القصيم)' },
-  { value: 'Tabuk', label: 'Tabuk (تبوك)' },
-  { value: 'Asir', label: 'Asir (عسير)' },
-  { value: 'Jazan', label: 'Jazan (جازان)' },
-  { value: 'Hail', label: 'Hail (حائل)' },
-  { value: 'Najran', label: 'Najran (نجران)' },
-  { value: 'Al-Bahah', label: 'Al-Bahah (الباحة)' },
-  { value: 'Al-Jawf', label: 'Al-Jawf (الجوف)' },
-  { value: 'Northern Borders', label: 'Northern Borders (الحدود الشمالية)' },
+  { value: 'Riyadh Region', label: 'Riyadh Region' },
+  { value: 'Makkah Region', label: 'Makkah Region' },
+  { value: 'Madinah Region', label: 'Madinah Region' },
+  { value: 'Eastern Province', label: 'Eastern Province (Ash Sharqiyah)' },
+  { value: 'Asir Region', label: 'Asir Region' },
+  { value: 'Jazan Region', label: 'Jazan Region' },
+  { value: 'Najran Region', label: 'Najran Region' },
+  { value: 'Al Qassim Region', label: 'Al Qassim Region' },
+  { value: 'Hail Region', label: 'Hail Region' },
+  { value: 'Tabuk Region', label: 'Tabuk Region' },
+  { value: 'Northern Borders Region', label: 'Northern Borders Region' },
+  { value: 'Al Jawf Region', label: 'Al Jawf Region' },
+  { value: 'Al Bahah Region', label: 'Al Bahah Region' },
 ];
 
 export const SAUDI_CITIES_BY_REGION: Record<string, CityOption[]> = {
-  Riyadh: [
-    { value: 'Riyadh', label: 'Riyadh (الرياض)' },
-    { value: 'Al-Kharj', label: 'Al-Kharj (الخرج)' },
-    { value: 'Al Majma\'ah', label: 'Al Majma\'ah (المجمعة)' },
-    { value: 'Ad Diriyah', label: 'Ad Diriyah (الدرعية)' },
-    { value: 'Wadi ad-Dawasir', label: 'Wadi ad-Dawasir (وادي الدواسر)' },
-    { value: 'Afif', label: 'Afif (عفيف)' },
-    { value: 'Zulfi', label: 'Zulfi (الزلفي)' },
+  'Riyadh Region': [
+    { value: 'Riyadh', label: 'Riyadh' },
+    { value: 'Al Kharj', label: 'Al Kharj' },
+    { value: 'Al Majma\'ah', label: 'Al Majma\'ah' },
+    { value: 'Wadi Al-Dawasir', label: 'Wadi Al-Dawasir' },
+    { value: 'Al Zulfi', label: 'Al Zulfi' },
   ],
-  Makkah: [
-    { value: 'Jeddah', label: 'Jeddah (جدة)' },
-    { value: 'Makkah', label: 'Makkah (مكة المكرمة)' },
-    { value: 'Taif', label: 'Taif (الطائف)' },
-    { value: 'Rabigh', label: 'Rabigh (رابغ)' },
-    { value: 'Al Qunfudhah', label: 'Al Qunfudhah (القنفذة)' },
-    { value: 'Khulais', label: 'Khulais (خليص)' },
+  'Makkah Region': [
+    { value: 'Jeddah', label: 'Jeddah' },
+    { value: 'Makkah', label: 'Makkah' },
+    { value: 'Taif', label: 'Taif' },
+    { value: 'Rabigh', label: 'Rabigh' },
+    { value: 'Al Lith', label: 'Al Lith' },
+  ],
+  'Madinah Region': [
+    { value: 'Madinah', label: 'Madinah' },
+    { value: 'Yanbu', label: 'Yanbu' },
+    { value: 'Al Ula', label: 'Al Ula' },
+    { value: 'Badr', label: 'Badr' },
+    { value: 'Khaybar', label: 'Khaybar' },
   ],
   'Eastern Province': [
-    { value: 'Dammam', label: 'Dammam (الدمام)' },
-    { value: 'Khobar', label: 'Khobar (الخبر)' },
-    { value: 'Jubail', label: 'Jubail (الجبيل)' },
-    { value: 'Hofuf', label: 'Hofuf (الهفوف)' },
-    { value: 'Qatif', label: 'Qatif (القطيف)' },
-    { value: 'Khafji', label: 'Khafji (الخفجي)' },
-    { value: 'Hafar Al-Batin', label: 'Hafar Al-Batin (حفر الباطن)' },
-    { value: 'Abqaiq', label: 'Abqaiq (بقيق)' },
+    { value: 'Dammam', label: 'Dammam' },
+    { value: 'Khobar', label: 'Khobar' },
+    { value: 'Dhahran', label: 'Dhahran' },
+    { value: 'Jubail', label: 'Jubail' },
+    { value: 'Al Ahsa', label: 'Al Ahsa' },
+    { value: 'Qatif', label: 'Qatif' },
+    { value: 'Hafr Al Batin', label: 'Hafr Al Batin' },
   ],
-  Madinah: [
-    { value: 'Madinah', label: 'Madinah (المدينة المنورة)' },
-    { value: 'Yanbu', label: 'Yanbu (ينبع)' },
-    { value: 'Al-Ula', label: 'Al-Ula (العلا)' },
-    { value: 'Badr', label: 'Badr (بدر)' },
+  'Asir Region': [
+    { value: 'Abha', label: 'Abha' },
+    { value: 'Khamis Mushait', label: 'Khamis Mushait' },
+    { value: 'Ahad Rafidah', label: 'Ahad Rafidah' },
+    { value: 'Mahayil Asir', label: 'Mahayil Asir' },
+    { value: 'Sarat Abidah', label: 'Sarat Abidah' },
   ],
-  'Al-Qassim': [
-    { value: 'Buraidah', label: 'Buraidah (بريدة)' },
-    { value: 'Unaizah', label: 'Unaizah (عنيزة)' },
-    { value: 'Ar Rass', label: 'Ar Rass (الرس)' },
-    { value: 'Al Mithnab', label: 'Al Mithnab (المذنب)' },
+  'Jazan Region': [
+    { value: 'Jazan', label: 'Jazan' },
+    { value: 'Sabya', label: 'Sabya' },
+    { value: 'Abu Arish', label: 'Abu Arish' },
+    { value: 'Samtah', label: 'Samtah' },
+    { value: 'Farasan', label: 'Farasan' },
   ],
-  Tabuk: [
-    { value: 'Tabuk', label: 'Tabuk (تبوك)' },
-    { value: 'Duba', label: 'Duba (ضبا)' },
-    { value: 'Umluj', label: 'Umluj (أملج)' },
-    { value: 'Tayma', label: 'Tayma (تيماء)' },
+  'Najran Region': [
+    { value: 'Najran', label: 'Najran' },
+    { value: 'Sharurah', label: 'Sharurah' },
+    { value: 'Hubuna', label: 'Hubuna' },
+    { value: 'Badr Al Janub', label: 'Badr Al Janub' },
   ],
-  Asir: [
-    { value: 'Abha', label: 'Abha (أبها)' },
-    { value: 'Khamis Mushait', label: 'Khamis Mushait (خميس مشيط)' },
-    { value: 'Bisha', label: 'Bisha (بيشة)' },
-    { value: 'Ahad Rafidah', label: 'Ahad Rafidah (أحد رفيدة)' },
+  'Al Qassim Region': [
+    { value: 'Buraydah', label: 'Buraydah' },
+    { value: 'Unaizah', label: 'Unaizah' },
+    { value: 'Ar Rass', label: 'Ar Rass' },
+    { value: 'Al Bukayriyah', label: 'Al Bukayriyah' },
+    { value: 'Al Badayea', label: 'Al Badayea' },
   ],
-  Jazan: [
-    { value: 'Jazan', label: 'Jazan (جازان)' },
-    { value: 'Sabya', label: 'Sabya (صبيا)' },
-    { value: 'Abu Arish', label: 'Abu Arish (أبو عريش)' },
-    { value: 'Samtah', label: 'Samtah (صامطة)' },
+  'Hail Region': [
+    { value: 'Hail', label: 'Hail' },
+    { value: 'Baqaa', label: 'Baqaa' },
+    { value: 'Ghazalah', label: 'Ghazalah' },
+    { value: 'Ash Shamli', label: 'Ash Shamli' },
   ],
-  Hail: [
-    { value: 'Hail', label: 'Hail (حائل)' },
-    { value: 'Baqa\'a', label: 'Baqa\'a (بقعاء)' },
+  'Tabuk Region': [
+    { value: 'Tabuk', label: 'Tabuk' },
+    { value: 'Duba', label: 'Duba' },
+    { value: 'Al Wajh', label: 'Al Wajh' },
+    { value: 'Umluj', label: 'Umluj' },
+    { value: 'Haql', label: 'Haql' },
+    { value: 'Tayma', label: 'Tayma' },
   ],
-  Najran: [
-    { value: 'Najran', label: 'Najran (نجران)' },
-    { value: 'Sharurah', label: 'Sharurah (شرورة)' },
+  'Northern Borders Region': [
+    { value: 'Arar', label: 'Arar' },
+    { value: 'Rafha', label: 'Rafha' },
+    { value: 'Turaif', label: 'Turaif' },
+    { value: 'Al Uwayqilah', label: 'Al Uwayqilah' },
   ],
-  'Al-Bahah': [
-    { value: 'Al-Bahah', label: 'Al-Bahah (الباحة)' },
-    { value: 'Baljurashi', label: 'Baljurashi (بلجرشي)' },
-    { value: 'Al Mandaq', label: 'Al Mandaq (المندق)' },
+  'Al Jawf Region': [
+    { value: 'Sakaka', label: 'Sakaka' },
+    { value: 'Qurayyat', label: 'Qurayyat' },
+    { value: 'Dumat Al Jandal', label: 'Dumat Al Jandal' },
+    { value: 'Tabarjal', label: 'Tabarjal' },
   ],
-  'Al-Jawf': [
-    { value: 'Sakakah', label: 'Sakakah (سكاكا)' },
-    { value: 'Al Qurayyat', label: 'Al Qurayyat (القريات)' },
-    { value: 'Dumat al-Jandal', label: 'Dumat al-Jandal (دومة الجندل)' },
-  ],
-  'Northern Borders': [
-    { value: 'Arar', label: 'Arar (عرعر)' },
-    { value: 'Rafha', label: 'Rafha (رفحاء)' },
-    { value: 'Turaif', label: 'Turaif (طريف)' },
+  'Al Bahah Region': [
+    { value: 'Al Bahah', label: 'Al Bahah' },
+    { value: 'Baljurashi', label: 'Baljurashi' },
+    { value: 'Al Mandaq', label: 'Al Mandaq' },
+    { value: 'Al Aqiq', label: 'Al Aqiq' },
+    { value: 'Qilwah', label: 'Qilwah' },
   ],
 };

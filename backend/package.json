@@ -11,6 +11,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
+    "db:clear": "ts-node scripts/clear-db.ts",
+    "db:seeder": "ts-node scripts/seeder.ts",
     "test": "jest --runInBand --detectOpenHandles"
   },
   "prisma": {

@@ -189,7 +189,8 @@ const DashboardLayoutComponent: React.FC = () => {
       ];
     } else {
       const isSubmitted = profile ? profile.isSubmitted : user?.vendorProfile?.isSubmitted;
-      return [
+      const isCompany = (profile ? profile.vendorType : user?.vendorProfile?.vendorType) === 'COMPANY';
+      const items = [
         {
           label: 'Dashboard',
           path: '/vendor/dashboard',
@@ -216,6 +217,14 @@ const DashboardLayoutComponent: React.FC = () => {
           icon: <FolderOpen className="h-5 w-5 shrink-0" />,
         },
       ];
+      if (isCompany) {
+        items.push({
+          label: 'My Team',
+          path: '/vendor/team',
+          icon: <Users className="h-5 w-5 shrink-0" />,
+        });
+      }
+      return items;
     }
   }, [role, user, profile]);
 

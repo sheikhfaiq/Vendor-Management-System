@@ -159,6 +159,13 @@ export class VendorService {
       throw new AppError('Your profile must be approved by an administrator before registering services.', 403);
     }
 
+    if (scopes.includes('SUPPLY')) {
+      const productCount = await vendorRepository.countProducts(profile.id);
+      if (productCount === 0) {
+        throw new AppError('You must add at least one product to your catalog before registering a Supply scope of work.', 400);
+      }
+    }
+
     // Verify subcategory exists
     const subCategory = await serviceRepository.findSubCategoryById(subCategoryId) as any;
     if (!subCategory) {
@@ -229,6 +236,13 @@ export class VendorService {
 
     if (profile.status !== 'APPROVED') {
       throw new AppError('Your profile must be approved by an administrator before updating services.', 403);
+    }
+
+    if (scopes.includes('SUPPLY')) {
+      const productCount = await vendorRepository.countProducts(profile.id);
+      if (productCount === 0) {
+        throw new AppError('You must add at least one product to your catalog before registering a Supply scope of work.', 400);
+      }
     }
 
     const mapping = await vendorRepository.getVendorServiceById(id);
@@ -512,6 +526,90 @@ export class VendorService {
       userId,
       'VENDOR_PRODUCT_DELETE',
       `Deleted product: ${product.name}`,
+      ip,
+      userAgent
+    );
+  }
+
+  async getTeamMembers(userId: string) {
+    const profile = await this.getProfileByUserId(userId);
+    if (profile.vendorType !== 'COMPANY') {
+      throw new AppError('Only corporate vendors are allowed to manage team members.', 403);
+    }
+    return vendorRepository.getTeamMembers(profile.id);
+  }
+
+  async addTeamMember(userId: string, data: any, ip?: string, userAgent?: string) {
+    const profile = await this.getProfileByUserId(userId);
+    if (profile.vendorType !== 'COMPANY') {
+      throw new AppError('Only corporate vendors are allowed to manage team members.', 403);
+    }
+    if (profile.isSubmitted && profile.status !== 'APPROVED') {
+      throw new AppError('Action forbidden. Profile is currently locked under compliance review.', 403);
+    }
+
+    const member = await vendorRepository.createTeamMember(profile.id, data);
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_TEAM_MEMBER_ADD',
+      `Added team member: ${member.name}`,
+      ip,
+      userAgent
+    );
+
+    return member;
+  }
+
+  async updateTeamMember(userId: string, id: string, data: any, ip?: string, userAgent?: string) {
+    const profile = await this.getProfileByUserId(userId);
+    if (profile.vendorType !== 'COMPANY') {
+      throw new AppError('Only corporate vendors are allowed to manage team members.', 403);
+    }
+    if (profile.isSubmitted && profile.status !== 'APPROVED') {
+      throw new AppError('Action forbidden. Profile is currently locked under compliance review.', 403);
+    }
+
+    // Verify ownership
+    const existing = await vendorRepository.getTeamMemberById(id, profile.id);
+    if (!existing) {
+      throw new AppError('Team member not found', 404);
+    }
+
+    const member = await vendorRepository.updateTeamMember(id, profile.id, data);
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_TEAM_MEMBER_UPDATE',
+      `Updated team member: ${member.name}`,
+      ip,
+      userAgent
+    );
+
+    return member;
+  }
+
+  async deleteTeamMember(userId: string, id: string, ip?: string, userAgent?: string) {
+    const profile = await this.getProfileByUserId(userId);
+    if (profile.vendorType !== 'COMPANY') {
+      throw new AppError('Only corporate vendors are allowed to manage team members.', 403);
+    }
+    if (profile.isSubmitted && profile.status !== 'APPROVED') {
+      throw new AppError('Action forbidden. Profile is currently locked under compliance review.', 403);
+    }
+
+    // Verify ownership
+    const existing = await vendorRepository.getTeamMemberById(id, profile.id);
+    if (!existing) {
+      throw new AppError('Team member not found', 404);
+    }
+
+    await vendorRepository.deleteTeamMember(id, profile.id);
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_TEAM_MEMBER_DELETE',
+      `Deleted team member: ${existing.name}`,
       ip,
       userAgent
     );

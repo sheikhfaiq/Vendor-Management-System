@@ -89,4 +89,23 @@ export const vendorApi = {
   async deleteProduct(id: string): Promise<void> {
     await axiosClient.delete(`/vendors/products/${id}`);
   },
+
+  async getTeamMembers(): Promise<any[]> {
+    const res = await axiosClient.get('/vendors/team');
+    return res.data.data;
+  },
+
+  async addTeamMember(data: any): Promise<any> {
+    const res = await axiosClient.post('/vendors/team', data);
+    return res.data.data;
+  },
+
+  async updateTeamMember(id: string, data: any): Promise<any> {
+    const res = await axiosClient.put(`/vendors/team/${id}`, data);
+    return res.data.data;
+  },
+
+  async deleteTeamMember(id: string): Promise<void> {
+    await axiosClient.delete(`/vendors/team/${id}`);
+  },
 };

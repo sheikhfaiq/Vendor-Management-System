@@ -12,7 +12,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
 import { User, Phone, MapPin, Building, Globe, Calendar, CreditCard, Flag, FileText, Briefcase, Shield, Lock } from 'lucide-react';
-import { SAUDI_REGIONS, SAUDI_CITIES_BY_REGION } from '../../../constants/saudiGeography';
+import { SAUDI_REGIONS, SAUDI_CITIES_BY_REGION, COUNTRY_OPTIONS } from '../../../constants/saudiGeography';
 import { SearchableSelect } from '../../../components/SearchableSelect/SearchableSelect';
 
 const profileCompletionSchema = z
@@ -588,15 +588,13 @@ const ProfileCompletionComponent: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Input
+              <Select
                 {...register('country')}
-                type="text"
                 label="Country *"
-                placeholder="Saudi Arabia"
-                readOnly={isFormLocked}
+                disabled={isFormLocked}
                 className={isFormLocked ? "bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200" : ""}
                 error={errors.country?.message}
-                icon={globeIcon}
+                options={COUNTRY_OPTIONS}
               />
               <Controller
                 name="region"

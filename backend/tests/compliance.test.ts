@@ -151,5 +151,43 @@ describe('Individual Vendor Compliance Rules', () => {
         )
       );
     });
+
+    it('should block registering SUPPLY scope if vendor has 0 products', async () => {
+      const mockProfile = {
+        id: 'v-123',
+        profileCompletion: 100,
+        status: 'APPROVED',
+        vendorType: 'COMPANY',
+      };
+      (vendorRepository.getProfileByUserId as jest.Mock).mockResolvedValue(mockProfile);
+      (vendorRepository.countProducts as jest.Mock).mockResolvedValue(0);
+
+      await expect(
+        vendorService.addService('user-123', 'sub-123', ['SUPPLY'])
+      ).rejects.toThrow(
+        new AppError('You must add at least one product to your catalog before registering a Supply scope of work.', 400)
+      );
+    });
+
+    it('should allow registering SUPPLY scope if vendor has 1 or more products', async () => {
+      const mockProfile = {
+        id: 'v-123',
+        profileCompletion: 100,
+        status: 'APPROVED',
+        vendorType: 'COMPANY',
+      };
+      (vendorRepository.getProfileByUserId as jest.Mock).mockResolvedValue(mockProfile);
+      (vendorRepository.countProducts as jest.Mock).mockResolvedValue(1);
+      (serviceRepository.findSubCategoryById as jest.Mock).mockResolvedValue({
+        id: 'sub-123',
+        name: 'Cement Supply',
+        category: { mainCategory: { name: 'Civil Works' } },
+      });
+      (vendorRepository.findVendorServiceByMapping as jest.Mock).mockResolvedValue(null);
+      (vendorRepository.addService as jest.Mock).mockResolvedValue({ id: 'mapping-123' });
+
+      const result = await vendorService.addService('user-123', 'sub-123', ['SUPPLY']);
+      expect(result).toBeDefined();
+    });
   });
 });

@@ -226,6 +226,64 @@ export class VendorController {
       next(error);
     }
   }
+
+  async getTeamMembers(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const members = await vendorService.getTeamMembers(userId);
+      sendSuccess(res, 'Team members retrieved successfully', members);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async addTeamMember(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const member = await vendorService.addTeamMember(
+        userId,
+        req.body,
+        req.ip,
+        req.headers['user-agent'] as string
+      );
+      sendSuccess(res, 'Team member added successfully', member);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async updateTeamMember(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const { id } = req.params;
+      const member = await vendorService.updateTeamMember(
+        userId,
+        id,
+        req.body,
+        req.ip,
+        req.headers['user-agent'] as string
+      );
+      sendSuccess(res, 'Team member updated successfully', member);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteTeamMember(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const { id } = req.params;
+      await vendorService.deleteTeamMember(
+        userId,
+        id,
+        req.ip,
+        req.headers['user-agent'] as string
+      );
+      sendSuccess(res, 'Team member deleted successfully');
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const vendorController = new VendorController();

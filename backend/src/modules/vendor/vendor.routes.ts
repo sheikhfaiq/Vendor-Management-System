@@ -7,6 +7,8 @@ import {
   updateProfileSchema,
   addVendorServiceSchema,
   updateVendorServiceSchema,
+  createTeamMemberSchema,
+  updateTeamMemberSchema,
 } from './vendor.schema';
 
 const router = Router();
@@ -36,5 +38,11 @@ router.post('/profile/submit', vendorController.submitProfile as any);
 router.get('/products', vendorController.getProducts as any);
 router.post('/products', vendorController.addProduct as any);
 router.delete('/products/:id', vendorController.deleteProduct as any);
+
+// Team management routes
+router.get('/team', vendorController.getTeamMembers as any);
+router.post('/team', validate({ body: createTeamMemberSchema }), vendorController.addTeamMember as any);
+router.put('/team/:id', validate({ body: updateTeamMemberSchema }), vendorController.updateTeamMember as any);
+router.delete('/team/:id', vendorController.deleteTeamMember as any);
 
 export default router;

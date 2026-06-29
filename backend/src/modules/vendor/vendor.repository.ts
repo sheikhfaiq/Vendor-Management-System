@@ -187,6 +187,65 @@ export class VendorRepository {
       where: { vendorProfileId },
     });
   }
+
+  async getTeamMembers(vendorProfileId: string) {
+    return prisma.teamMember.findMany({
+      where: { vendorProfileId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async getTeamMemberById(id: string, vendorProfileId: string) {
+    return prisma.teamMember.findFirst({
+      where: { id, vendorProfileId },
+    });
+  }
+
+  async createTeamMember(vendorProfileId: string, data: any) {
+    return prisma.teamMember.create({
+      data: {
+        vendorProfileId,
+        name: data.name,
+        phone: data.phone,
+        email: data.email || null,
+        assetName: data.assetName || null,
+        iqamaNumber: data.iqamaNumber || null,
+        expiryDate: data.expiryDate ? new Date(data.expiryDate) : null,
+        nationality: data.nationality || null,
+        bloodGroup: data.bloodGroup || null,
+        gosiCertificateNo: data.gosiCertificateNo || null,
+        insurancePolicyNo: data.insurancePolicyNo || null,
+        iqamaProfession: data.iqamaProfession || null,
+        iqamaCompanyName: data.iqamaCompanyName || null,
+      },
+    });
+  }
+
+  async updateTeamMember(id: string, vendorProfileId: string, data: any) {
+    return prisma.teamMember.update({
+      where: { id, vendorProfileId },
+      data: {
+        name: data.name,
+        phone: data.phone,
+        email: data.email !== undefined ? (data.email || null) : undefined,
+        assetName: data.assetName !== undefined ? (data.assetName || null) : undefined,
+        iqamaNumber: data.iqamaNumber !== undefined ? (data.iqamaNumber || null) : undefined,
+        expiryDate: data.expiryDate !== undefined ? (data.expiryDate ? new Date(data.expiryDate) : null) : undefined,
+        nationality: data.nationality !== undefined ? (data.nationality || null) : undefined,
+        bloodGroup: data.bloodGroup !== undefined ? (data.bloodGroup || null) : undefined,
+        gosiCertificateNo: data.gosiCertificateNo !== undefined ? (data.gosiCertificateNo || null) : undefined,
+        insurancePolicyNo: data.insurancePolicyNo !== undefined ? (data.insurancePolicyNo || null) : undefined,
+        iqamaProfession: data.iqamaProfession !== undefined ? (data.iqamaProfession || null) : undefined,
+        iqamaCompanyName: data.iqamaCompanyName !== undefined ? (data.iqamaCompanyName || null) : undefined,
+      },
+    });
+  }
+
+  async deleteTeamMember(id: string, vendorProfileId: string) {
+    return prisma.teamMember.delete({
+      where: { id, vendorProfileId },
+    });
+  }
 }
 
 export const vendorRepository = new VendorRepository();

@@ -38,3 +38,21 @@ export const updateVendorServiceSchema = z.object({
     z.enum(['DESIGN_ENGINEERING', 'SUPPLY', 'INSTALLATION', 'TESTING_COMMISSIONING'])
   ).min(1, 'At least one scope of work must be specified'),
 });
+
+export const createTeamMemberSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  phone: z.string().min(8, 'Phone number must be at least 8 digits'),
+  email: z.string().email('Invalid email address').optional().or(z.literal('').or(z.null())),
+  assetName: z.string().optional().or(z.null()),
+  iqamaNumber: z.string().optional().or(z.null()),
+  expiryDate: z.string().optional().or(z.null()),
+  nationality: z.string().optional().or(z.null()),
+  bloodGroup: z.string().optional().or(z.null()),
+  gosiCertificateNo: z.string().optional().or(z.null()),
+  insurancePolicyNo: z.string().optional().or(z.null()),
+  iqamaProfession: z.string().optional().or(z.null()),
+  iqamaCompanyName: z.string().optional().or(z.null()),
+});
+
+export const updateTeamMemberSchema = createTeamMemberSchema.partial();
+

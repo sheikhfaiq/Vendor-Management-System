@@ -145,7 +145,7 @@ const AdminDashboardComponent: React.FC = () => {
                   return (
                     <tr key={vendor.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="py-3.5 px-3 font-mono text-xs text-slate-500 font-semibold">
-                        {vendor.id.slice(0, 8)}
+                        {vendor.vendorCode || 'N/A'}
                       </td>
                       <td className="py-3.5 px-3">
                         <span className="font-bold text-slate-800 block">

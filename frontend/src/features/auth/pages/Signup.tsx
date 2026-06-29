@@ -10,6 +10,7 @@ import { Input } from '../../../components/Input/Input';
 import { Select } from '../../../components/Select/Select';
 import { Button } from '../../../components/Button/Button';
 import { toastService } from '../../../lib/notifications/toastService';
+import { COUNTRY_OPTIONS } from '../../../constants/saudiGeography';
 import { logger } from '../../../lib/utils/logger';
 
 const signupFormSchema = z
@@ -184,9 +185,7 @@ const SignupComponent: React.FC = () => {
           <Select
             {...register('country')}
             label="Country"
-            options={[
-              { value: 'Saudi Arabia', label: 'Saudi Arabia (KSA)' },
-            ]}
+            options={COUNTRY_OPTIONS}
             error={errors.country?.message}
           />
         </div>
