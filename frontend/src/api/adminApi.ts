@@ -80,4 +80,9 @@ export const adminApi = {
     const res = await axiosClient.get('/admin/activity-logs', { params });
     return res.data.data;
   },
+
+  async verifyDocument(id: string): Promise<any> {
+    const res = await axiosClient.post(`/admin/documents/${id}/verify`);
+    return res.data.data;
+  },
 };

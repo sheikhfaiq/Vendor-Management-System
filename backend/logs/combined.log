@@ -1134,3 +1134,16 @@
 {"level":"info","message":"::1 - GET /admin/dashboard 304 2.380 ms - -","timestamp":"2026-06-29 15:25:11"}
 {"level":"info","message":"::1 - GET /notifications 304 2.266 ms - -","timestamp":"2026-06-29 15:25:16"}
 {"level":"info","message":"::1 - GET /admin/dashboard 304 1.751 ms - -","timestamp":"2026-06-29 15:25:16"}
+{"level":"info","message":"⚡️ Server is running on port 5050 in development mode","timestamp":"2026-06-29 15:33:07"}
+{"level":"info","message":"::1 - POST /auth/refresh-token 200 59.427 ms - 506","timestamp":"2026-06-29 15:33:17"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 201 292.767 ms - 918","timestamp":"2026-06-29 15:33:27"}
+{"level":"error","message":"API Error: Email address is already in use","stack":"Error: Email address is already in use\n    at AuthService.signupVendor (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.service.ts:14:13)\n    at signup (C:\\Users\\Laptop Legion\\Desktop\\Vendor-Management-System\\backend\\src\\modules\\auth\\auth.controller.ts:9:20)","timestamp":"2026-06-29 15:33:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/signup 400 63.624 ms - 73","timestamp":"2026-06-29 15:33:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - POST /auth/login 200 146.178 ms - 1359","timestamp":"2026-06-29 15:33:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile 200 11.506 ms - 743","timestamp":"2026-06-29 15:33:27"}
+{"level":"info","message":"::ffff:127.0.0.1 - GET /vendors/profile/completion 200 6.490 ms - 217","timestamp":"2026-06-29 15:33:27"}
+{"level":"info","message":"::1 - GET /vendors/profile 304 31.957 ms - -","timestamp":"2026-06-29 15:33:37"}
+{"level":"info","message":"::1 - GET /notifications 304 102.947 ms - -","timestamp":"2026-06-29 15:33:37"}
+{"level":"info","message":"::1 - GET /admin/documents?page=1&limit=20 304 17.597 ms - -","timestamp":"2026-06-29 15:33:37"}
+{"level":"info","message":"::1 - GET /notifications 304 144.399 ms - -","timestamp":"2026-06-29 15:33:37"}
+{"level":"info","message":"::1 - GET /admin/dashboard 304 166.872 ms - -","timestamp":"2026-06-29 15:33:37"}

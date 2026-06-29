@@ -8,7 +8,7 @@ import { Button } from '../../../components/Button/Button';
 import { Modal } from '../../../components/Modal/Modal';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
-import { ArrowLeft, Check, X, ExternalLink, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Check, X, ExternalLink, Pencil, Plus, Trash2, ShieldCheck } from 'lucide-react';
 import { EditVendorModal } from '../../../components/EditVendorModal/EditVendorModal';
 import { AddServiceModal } from '../../../components/AddServiceModal/AddServiceModal';
 import { EditServiceScopesModal } from '../../../components/EditServiceScopesModal/EditServiceScopesModal';
@@ -22,6 +22,17 @@ const VendorDetailsComponent: React.FC = () => {
     queryKey: ['adminVendorDetails', id],
     queryFn: () => adminApi.getVendorDetails(id),
     enabled: !!id,
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: adminApi.verifyDocument,
+    onSuccess: () => {
+      toastService.success('Document verified and local file deleted successfully.');
+      queryClient.invalidateQueries({ queryKey: ['adminVendorDetails'] });
+    },
+    onError: (error: any) => {
+      toastService.error(error.response?.data?.message || 'Failed to verify document.');
+    },
   });
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -350,26 +361,46 @@ const VendorDetailsComponent: React.FC = () => {
                   </thead>
                   <tbody className="divide-y divide-slate-50 text-slate-650 font-medium">
                     {vendor.documents?.map((doc: any) => {
+                      const isVerified = doc.fileKey === 'verified_and_deleted';
                       const baseName = doc.fileKey.replace(/^documents\//, '');
                       const prefixRegex = /^[a-f0-9-]{36}-\d{13}-[a-f0-9]{8}-/;
-                      const cleanName = baseName.replace(prefixRegex, '');
-                      const kbs = (doc.fileSize / 1024).toFixed(1);
+                      const cleanName = isVerified ? 'Deleted from Local Disk' : baseName.replace(prefixRegex, '');
+                      const kbs = isVerified ? '0.0' : (doc.fileSize / 1024).toFixed(1);
 
                       return (
                         <tr key={doc.id}>
                           <td className="py-3 px-3 font-semibold text-slate-800">{doc.name}</td>
                           <td className="py-3 px-3 text-slate-650 font-bold">{doc.documentNumber || 'N/A'}</td>
-                          <td className="py-3 px-3 text-slate-500 font-mono text-xxs max-w-[200px] truncate">{cleanName}</td>
+                          <td className={`py-3 px-3 font-mono text-xxs max-w-[200px] truncate ${isVerified ? 'text-slate-400 italic' : 'text-slate-500'}`}>{cleanName}</td>
                           <td className="py-3 px-3 text-slate-400">{kbs} KB</td>
                           <td className="py-3 px-3 text-right">
-                            <a
-                              href={doc.fileUrl.startsWith('http') ? doc.fileUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:5050'}${doc.fileUrl}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-hover hover:underline"
-                            >
-                              <ExternalLink className="h-3.5 w-3.5" /> View
-                            </a>
+                            {isVerified ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-green-600">
+                                <Check className="h-3.5 w-3.5" /> Verified (File Deleted)
+                              </span>
+                            ) : (
+                              <div className="inline-flex items-center gap-3">
+                                <a
+                                  href={doc.fileUrl.startsWith('http') ? doc.fileUrl : `${import.meta.env.VITE_API_URL || 'http://localhost:5050'}${doc.fileUrl}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:text-primary-hover hover:underline"
+                                >
+                                  <ExternalLink className="h-3.5 w-3.5" /> View
+                                </a>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm('Are you sure you want to verify this document? The local file will be permanently deleted to save server storage space.')) {
+                                      verifyMutation.mutate(doc.id);
+                                    }
+                                  }}
+                                  disabled={verifyMutation.isPending}
+                                  className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded-md cursor-pointer transition-colors disabled:opacity-50"
+                                >
+                                  <ShieldCheck className="h-3.5 w-3.5" /> Verify
+                                </button>
+                              </div>
+                            )}
                           </td>
                         </tr>
                       );

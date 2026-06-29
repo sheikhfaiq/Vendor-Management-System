@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../../api/adminApi';
 import { Loader } from '../../../components/Loader/Loader';
+import { toastService } from '../../../lib/notifications/toastService';
 import {
   FileText,
   ExternalLink,
@@ -10,6 +11,8 @@ import {
   FolderOpen,
   Building2,
   Calendar,
+  Check,
+  ShieldCheck,
 } from 'lucide-react';
 
 const DOC_TYPE_COLORS: Record<string, string> = {
@@ -23,12 +26,24 @@ const DOC_TYPE_COLORS: Record<string, string> = {
 const VendorDocumentsComponent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const queryClient = useQueryClient();
 
   const limit = 20;
 
   const { data: result, isLoading } = useQuery({
     queryKey: ['adminAllDocuments', currentPage],
     queryFn: () => adminApi.listAllDocuments({ page: currentPage, limit }),
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: adminApi.verifyDocument,
+    onSuccess: () => {
+      toastService.success('Document verified and local file deleted successfully.');
+      queryClient.invalidateQueries({ queryKey: ['adminAllDocuments'] });
+    },
+    onError: (error: any) => {
+      toastService.error(error.response?.data?.message || 'Failed to verify document.');
+    },
   });
 
   const allDocs = useMemo(() => result?.data || [], [result]);
@@ -173,9 +188,14 @@ const VendorDocumentsComponent: React.FC = () => {
                               <span className="block font-bold text-slate-800 truncate max-w-[160px]">
                                 {doc.name || 'Document'}
                               </span>
-                              <span className="block text-[10px] text-slate-400 font-mono truncate max-w-[160px]">
-                                {fileName}
+                              <span className="block text-[10px] text-slate-500 font-medium truncate max-w-[160px]">
+                                Cert: {doc.documentNumber || 'N/A'}
                               </span>
+                              {doc.fileKey !== 'verified_and_deleted' && (
+                                <span className="block text-[10px] text-slate-400 font-mono truncate max-w-[160px]">
+                                  {fileName}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -226,23 +246,43 @@ const VendorDocumentsComponent: React.FC = () => {
                         {/* Actions */}
                         <td className="py-3.5 px-4">
                           <div className="flex items-center gap-2 justify-center">
-                            <a
-                              href={fileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center gap-1.5 text-[11px] font-bold text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors select-none"
-                              title="View Document"
-                            >
-                              <ExternalLink className="h-3.5 w-3.5" /> View
-                            </a>
-                            <a
-                              href={fileUrl}
-                              download={fileName}
-                              className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-150 px-2.5 py-1.5 rounded-lg transition-colors select-none"
-                              title="Download Document"
-                            >
-                              <Download className="h-3.5 w-3.5" /> Download
-                            </a>
+                            {doc.fileKey === 'verified_and_deleted' ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold bg-green-50 text-green-700 border border-green-150/50 select-none">
+                                <Check className="h-3.5 w-3.5 shrink-0" /> Verified (File Deleted)
+                              </span>
+                            ) : (
+                              <>
+                                <a
+                                  href={fileUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1.5 text-[11px] font-bold text-primary hover:text-primary-hover bg-primary/5 hover:bg-primary/10 px-2.5 py-1.5 rounded-lg transition-colors select-none"
+                                  title="View Document"
+                                >
+                                  <ExternalLink className="h-3.5 w-3.5" /> View
+                                </a>
+                                <a
+                                  href={fileUrl}
+                                  download={fileName}
+                                  className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 hover:text-slate-800 bg-slate-100 hover:bg-slate-150 px-2.5 py-1.5 rounded-lg transition-colors select-none"
+                                  title="Download Document"
+                                >
+                                  <Download className="h-3.5 w-3.5" /> Download
+                                </a>
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm('Are you sure you want to verify this document? The local file will be permanently deleted to save server storage space.')) {
+                                      verifyMutation.mutate(doc.id);
+                                    }
+                                  }}
+                                  disabled={verifyMutation.isPending}
+                                  className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1.5 rounded-lg transition-colors select-none cursor-pointer disabled:opacity-50"
+                                  title="Verify and delete local file"
+                                >
+                                  <ShieldCheck className="h-3.5 w-3.5" /> Verify
+                                </button>
+                              </>
+                            )}
                           </div>
                         </td>
                       </tr>

@@ -6,6 +6,7 @@ import { VendorStatus } from '@prisma/client';
 import prisma from '../../config/prisma';
 import { calculateProfileCompletion } from '../../utils/profileCompletion';
 import { notificationService } from '../notification/notification.service';
+import { storageService } from '../../utils/storage.service';
 
 export class AdminService {
   async getDashboardStats() {
@@ -23,6 +24,58 @@ export class AdminService {
   async listAllDocuments(params: PaginationParams, vendorId?: string) {
     const { docs, total } = await adminRepository.getAllDocuments(params.skip, params.limit, vendorId);
     return formatPaginatedResult(docs, total, params);
+  }
+
+  async verifyDocument(
+    adminId: string,
+    documentId: string,
+    ip?: string,
+    userAgent?: string
+  ) {
+    const document = await prisma.vendorDocument.findUnique({
+      where: { id: documentId },
+      include: {
+        vendorProfile: {
+          include: {
+            user: {
+              select: {
+                email: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!document) {
+      throw new AppError('Document not found', 404);
+    }
+
+    try {
+      if (document.fileKey && document.fileKey !== 'verified_and_deleted') {
+        await storageService.deleteFile(document.fileKey);
+      }
+    } catch (err) {
+      console.error('Failed to delete file from storage during verification:', err);
+    }
+
+    const updatedDoc = await prisma.vendorDocument.update({
+      where: { id: documentId },
+      data: {
+        fileKey: 'verified_and_deleted',
+        fileUrl: 'verified_and_deleted',
+      },
+    });
+
+    await authRepository.createActivityLog(
+      adminId,
+      'ADMIN_VERIFY_DOCUMENT',
+      `Admin verified and deleted document file key locally. Type: ${document.name}, Vendor: ${document.vendorProfile?.companyName || document.vendorProfile?.ownerName}, Cert No: ${document.documentNumber || 'N/A'}`,
+      ip,
+      userAgent
+    );
+
+    return updatedDoc;
   }
 
   async getVendorById(id: string) {

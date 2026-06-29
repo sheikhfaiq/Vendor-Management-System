@@ -24,6 +24,7 @@ router.delete('/vendors/:id/services/:serviceId', adminController.deleteVendorSe
 router.patch('/vendors/:id/status', validate({ body: updateVendorStatusSchema }), adminController.updateVendorStatus as any);
 router.get('/users', adminController.listUsers as any);
 router.get('/documents', adminController.listAllDocuments as any);
+router.post('/documents/:id/verify', adminController.verifyDocument as any);
 router.get('/activity-logs', adminController.listActivityLogs as any);
 
 export default router;

@@ -180,6 +180,22 @@ export class AdminController {
       next(error);
     }
   }
+
+  async verifyDocument(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { id } = req.params;
+      const adminId = req.user!.userId;
+      const result = await adminService.verifyDocument(
+        adminId,
+        id,
+        req.ip,
+        req.headers['user-agent']
+      );
+      sendSuccess(res, 'Document verified and file deleted locally successfully', result);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const adminController = new AdminController();
