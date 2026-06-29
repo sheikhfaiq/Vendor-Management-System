@@ -25,6 +25,7 @@ const VendorDashboard = lazy(() => import('../features/vendor/pages/VendorDashbo
 const ProfileCompletion = lazy(() => import('../features/vendor/pages/ProfileCompletion'));
 const MyServices = lazy(() => import('../features/vendor/pages/MyServices'));
 const MyDocuments = lazy(() => import('../features/vendor/pages/MyDocuments'));
+// Lazy load product catalog pages
 const MyProducts = lazy(() => import('../features/vendor/pages/MyProducts'));
 
 // Protected Pages (Admin)
