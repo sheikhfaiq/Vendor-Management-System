@@ -446,7 +446,7 @@ export const EditVendorModal: React.FC<EditVendorModalProps> = ({
                 label="Saudi Region"
                 placeholder="Select Region..."
                 options={regionOptions}
-                value={field.value}
+                value={field.value || ''}
                 onChange={field.onChange}
                 error={errors.region?.message}
               />
@@ -461,7 +461,7 @@ export const EditVendorModal: React.FC<EditVendorModalProps> = ({
                 placeholder="Select City..."
                 options={cityOptions}
                 disabled={!selectedRegion}
-                value={field.value}
+                value={field.value || ''}
                 onChange={field.onChange}
                 error={errors.city?.message}
               />

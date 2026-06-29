@@ -4,7 +4,9 @@ import { useAuth } from '../../features/auth/context/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../api/adminApi';
 import { notificationApi } from '../../api/notificationApi';
+import { vendorApi } from '../../api/vendorApi';
 import { toastService } from '../../lib/notifications/toastService';
+import { toast } from 'react-hot-toast';
 import {
   LayoutDashboard,
   Building2,
@@ -24,7 +26,6 @@ import {
   Trash2,
   CheckCheck,
   ShieldCheck,
-  CheckCircle2,
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -35,6 +36,7 @@ interface SidebarItem {
 
 const DashboardLayoutComponent: React.FC = () => {
   const { user, logout } = useAuth();
+  const role = user?.role || 'VENDOR';
   const navigate = useNavigate();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -42,17 +44,42 @@ const DashboardLayoutComponent: React.FC = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
-  const hasShownToast = useRef(false);
+  const toastIdRef = useRef<string | null>(null);
+
+  // Vendor profile query (live polling status)
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ['vendorProfile'],
+    queryFn: vendorApi.getProfile,
+    enabled: role === 'VENDOR',
+    refetchInterval: 5000, // Auto-sync approval state in real-time
+  });
 
   const isPendingApproval = useMemo(() => {
-    return user?.role === 'VENDOR' && user?.vendorProfile?.status === 'PENDING';
-  }, [user]);
+    if (role !== 'VENDOR') return false;
+    if (isLoadingProfile) return false; // Prevent flickering during initial query fetch
+    const currentStatus = profile ? profile.status : user?.vendorProfile?.status;
+    return currentStatus === 'PENDING';
+  }, [role, profile, user, isLoadingProfile]);
 
   useEffect(() => {
-    if (isPendingApproval && !hasShownToast.current) {
-      toastService.warn('Your account is pending administrator approval. Portal is in read-only mode.');
-      hasShownToast.current = true;
+    if (isPendingApproval) {
+      if (!toastIdRef.current) {
+        toastIdRef.current = toastService.warn(
+          'Your account is pending administrator approval. Portal is in read-only mode.',
+          Infinity
+        ) as any;
+      }
+    } else {
+      if (toastIdRef.current) {
+        toast.dismiss(toastIdRef.current);
+        toastIdRef.current = null;
+      }
     }
+    return () => {
+      if (toastIdRef.current) {
+        toast.dismiss(toastIdRef.current);
+      }
+    };
   }, [isPendingApproval]);
 
   // Close dropdown on click outside
@@ -83,7 +110,7 @@ const DashboardLayoutComponent: React.FC = () => {
     setIsMobileOpen(false);
   }, []);
 
-  const role = user?.role || 'VENDOR';
+
 
   // Stats query for admin approvals badge count
   const { data: adminStats } = useQuery({
@@ -157,6 +184,7 @@ const DashboardLayoutComponent: React.FC = () => {
         },
       ];
     } else {
+      const isSubmitted = profile ? profile.isSubmitted : user?.vendorProfile?.isSubmitted;
       return [
         {
           label: 'Dashboard',
@@ -164,7 +192,7 @@ const DashboardLayoutComponent: React.FC = () => {
           icon: <LayoutDashboard className="h-5 w-5 shrink-0" />,
         },
         {
-          label: user?.vendorProfile?.isSubmitted ? 'View Profile' : 'Complete Profile',
+          label: isSubmitted ? 'View Profile' : 'Complete Profile',
           path: '/vendor/profile-completion',
           icon: <UserIcon className="h-5 w-5 shrink-0" />,
         },
@@ -180,22 +208,29 @@ const DashboardLayoutComponent: React.FC = () => {
         },
       ];
     }
-  }, [role, user?.vendorProfile?.isSubmitted]);
+  }, [role, user, profile]);
 
   const renderSidebarItem = useCallback(
     (item: SidebarItem) => {
       const isActive = location.pathname === item.path;
       const showBadge = item.label === 'Pending Approvals' && adminStats?.pendingVendors && adminStats.pendingVendors > 0;
+      const isItemDisabled = isPendingApproval && item.path !== '/vendor/dashboard';
       return (
         <Link
           key={item.path}
-          to={item.path}
-          onClick={closeMobile}
+          to={isItemDisabled ? '#' : item.path}
+          onClick={(e) => {
+            if (isItemDisabled) {
+              e.preventDefault();
+              return;
+            }
+            closeMobile();
+          }}
           className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-150 select-none relative ${
             isActive
               ? 'bg-primary text-white shadow-sm'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
+          } ${isItemDisabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}`}
         >
           {item.icon}
           {!isCollapsed && <span className="truncate">{item.label}</span>}
@@ -210,7 +245,7 @@ const DashboardLayoutComponent: React.FC = () => {
         </Link>
       );
     },
-    [location.pathname, isCollapsed, closeMobile, adminStats]
+    [location.pathname, isCollapsed, closeMobile, adminStats, isPendingApproval]
   );
 
   return (
