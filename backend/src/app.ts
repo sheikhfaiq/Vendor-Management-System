@@ -6,7 +6,7 @@ import path from 'path';
 import logger from './config/logger';
 import { errorHandler } from './middleware/error.middleware';
 
-// Import routes
+// App configurations
 import authRoutes from './modules/auth/auth.routes';
 import serviceRoutes from './modules/service/service.routes';
 import vendorRoutes from './modules/vendor/vendor.routes';

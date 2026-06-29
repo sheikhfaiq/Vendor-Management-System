@@ -4,6 +4,7 @@ import { useAuth } from '../../features/auth/context/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { adminApi } from '../../api/adminApi';
 import { notificationApi } from '../../api/notificationApi';
+import { toastService } from '../../lib/notifications/toastService';
 import {
   LayoutDashboard,
   Building2,
@@ -23,6 +24,7 @@ import {
   Trash2,
   CheckCheck,
   ShieldCheck,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -40,6 +42,18 @@ const DashboardLayoutComponent: React.FC = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notificationRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+  const hasShownToast = useRef(false);
+
+  const isPendingApproval = useMemo(() => {
+    return user?.role === 'VENDOR' && user?.vendorProfile?.status === 'PENDING';
+  }, [user]);
+
+  useEffect(() => {
+    if (isPendingApproval && !hasShownToast.current) {
+      toastService.warn('Your account is pending administrator approval. Portal is in read-only mode.');
+      hasShownToast.current = true;
+    }
+  }, [isPendingApproval]);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -166,7 +180,7 @@ const DashboardLayoutComponent: React.FC = () => {
         },
       ];
     }
-  }, [role]);
+  }, [role, user?.vendorProfile?.isSubmitted]);
 
   const renderSidebarItem = useCallback(
     (item: SidebarItem) => {

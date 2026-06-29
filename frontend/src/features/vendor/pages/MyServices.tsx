@@ -141,7 +141,7 @@ const MyServicesComponent: React.FC = () => {
     queryFn: serviceApi.getMainCategories,
   });
 
-  const isLocked = !!(profile?.isSubmitted && profile?.status !== 'APPROVED');
+  const isLocked = !profile || profile.status !== 'APPROVED';
 
   const { data: categoriesMap, isLoading: _loadingCats } = useQuery({
     queryKey: ['categories', expandedMainCat],

@@ -318,7 +318,7 @@ const ProfileCompletionComponent: React.FC = () => {
   if (isLoading) return <Loader />;
 
   // Determine if fields have already been filled in the database profile
-  const isFormLocked = !!(profile?.isSubmitted && profile?.status !== 'APPROVED');
+  const isFormLocked = !profile || profile.status !== 'APPROVED';
 
   const isVendorTypeFilled = !!profile?.vendorType || isFormLocked;
   const isBusinessCategoryFilled = !!profile?.businessCategory || isFormLocked;

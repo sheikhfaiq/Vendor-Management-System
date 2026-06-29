@@ -37,7 +37,7 @@ const MyDocumentsComponent: React.FC = () => {
     queryFn: vendorApi.getProfile,
   });
 
-  const isLocked = !!(profile?.isSubmitted && profile?.status !== 'APPROVED');
+  const isLocked = !profile || profile.status !== 'APPROVED';
 
   // Mutations
   const deleteMutation = useMutation({

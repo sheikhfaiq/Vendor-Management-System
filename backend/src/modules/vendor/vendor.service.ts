@@ -85,8 +85,8 @@ export class VendorService {
   }
 
   private checkLock(profile: any) {
-    if (profile.isSubmitted && profile.status !== 'APPROVED') {
-      throw new AppError('Action locked. Your profile is currently under review.', 403);
+    if (profile.status !== 'APPROVED') {
+      throw new AppError('Action locked. Your account is pending administrator approval.', 403);
     }
   }
 

@@ -32,7 +32,7 @@ describe('Individual Vendor Compliance Rules', () => {
 
       await expect(
         vendorService.addService('user-123', 'sub-123', ['INSTALLATION'])
-      ).rejects.toThrow(new AppError('Your profile must be approved by an administrator before registering services.', 403));
+      ).rejects.toThrow(new AppError('Action locked. Your account is pending administrator approval.', 403));
     });
 
     it('should block individual vendors from registering more than 2 services', async () => {
