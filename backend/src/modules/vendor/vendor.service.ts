@@ -90,6 +90,38 @@ export class VendorService {
     }
   }
 
+  async updateCombinedProfileCompletion(profileId: string) {
+    const profile = await vendorRepository.getProfileById(profileId);
+    if (!profile) return;
+
+    // 1. Details score (recompute raw details completion)
+    const detailsScore = calculateProfileCompletion(profile as any);
+
+    // 2. Services score (at least 1 service = 100%, else 0%)
+    const serviceCount = await vendorRepository.countServicesByVendorId(profile.id);
+    const servicesScore = serviceCount > 0 ? 100 : 0;
+
+    // 3. Documents score (6 mandatory documents, each counts for 1/6)
+    const documents = await vendorRepository.getDocumentsByProfileId(profile.id);
+    const requiredDocTypes = [
+      'Trade License',
+      'VAT Registration',
+      'Saudization Certificate',
+      'GOSI Certificate',
+      'Chamber of Commerce',
+      'Zakat Certificate',
+    ];
+    const uploadedTypes = documents.map((d: any) => d.name);
+    const uploadedCount = requiredDocTypes.filter((type) => uploadedTypes.includes(type)).length;
+    const documentsScore = Math.round((uploadedCount / 6) * 100);
+
+    // Overall combined score is the average of the three stages
+    const overallScore = Math.round((detailsScore + servicesScore + documentsScore) / 3);
+
+    // Save to database
+    await vendorRepository.updateProfileCompletion(profileId, overallScore);
+  }
+
   async updateProfile(userId: string, data: any, ip?: string, userAgent?: string) {
     const profile = await vendorRepository.getProfileByUserId(userId);
     if (!profile) {
@@ -101,24 +133,8 @@ export class VendorService {
       data.expiryDate = new Date(data.expiryDate);
     }
 
-    // Merge updates
-    const updatedFields = {
-      ...profile,
-      ...data,
-    };
-
-    const serviceCount = await vendorRepository.countServicesByVendorId(profile.id);
-
-    // Recalculate profile completion
-    const completion = calculateProfileCompletion({
-      ...updatedFields,
-      serviceCount,
-    });
-
-    const updatedProfile = await vendorRepository.updateProfile(userId, {
-      ...data,
-      profileCompletion: completion,
-    });
+    const updatedProfile = await vendorRepository.updateProfile(userId, data);
+    await this.updateCombinedProfileCompletion(profile.id);
 
     await authRepository.createActivityLog(
       userId,
@@ -127,22 +143,6 @@ export class VendorService {
       ip,
       userAgent
     );
-
-    if (profile.profileCompletion < 100 && completion === 100) {
-      const vendorName = updatedProfile.companyName || updatedProfile.ownerName || 'Unknown Vendor';
-      await notificationService.createNotification(
-        'Profile Submitted',
-        'Your compliance profile is 100% complete and has been submitted for administrative review.',
-        userId
-      );
-      await notificationService.createNotification(
-        'New Profile Completed',
-        `Vendor "${vendorName}" has completed their registration profile and is pending approval.`,
-        null,
-        'ADMIN'
-      );
-    }
-
     return updatedProfile;
   }
 
@@ -154,10 +154,6 @@ export class VendorService {
   async addService(userId: string, subCategoryId: string, scopes: ScopeOfWork[], ip?: string, userAgent?: string) {
     const profile = await this.getProfileByUserId(userId);
     this.checkLock(profile);
-
-    if (profile.profileCompletion < 100) {
-      throw new AppError('Your profile must be 100% complete before registering services.', 403);
-    }
 
     if (profile.status !== 'APPROVED') {
       throw new AppError('Your profile must be approved by an administrator before registering services.', 403);
@@ -200,17 +196,7 @@ export class VendorService {
     }
 
     const mapping = await vendorRepository.addService(profile.id, subCategoryId, scopes);
-
-    // Recalculate completion
-    const serviceCount = await vendorRepository.countServicesByVendorId(profile.id);
-    const completion = calculateProfileCompletion({
-      ...profile,
-      serviceCount,
-    });
-
-    await vendorRepository.updateProfile(userId, {
-      profileCompletion: completion,
-    });
+    await this.updateCombinedProfileCompletion(profile.id);
 
     await authRepository.createActivityLog(
       userId,
@@ -240,10 +226,6 @@ export class VendorService {
   async updateService(userId: string, id: string, scopes: ScopeOfWork[], ip?: string, userAgent?: string) {
     const profile = await this.getProfileByUserId(userId);
     this.checkLock(profile);
-
-    if (profile.profileCompletion < 100) {
-      throw new AppError('Your profile must be 100% complete before updating services.', 403);
-    }
 
     if (profile.status !== 'APPROVED') {
       throw new AppError('Your profile must be approved by an administrator before updating services.', 403);
@@ -314,17 +296,7 @@ export class VendorService {
     const vendorName = profile.companyName || profile.ownerName || 'Unknown Vendor';
 
     await vendorRepository.deleteService(id);
-
-    // Recalculate completion
-    const serviceCount = await vendorRepository.countServicesByVendorId(profile.id);
-    const completion = calculateProfileCompletion({
-      ...profile,
-      serviceCount,
-    });
-
-    await vendorRepository.updateProfile(userId, {
-      profileCompletion: completion,
-    });
+    await this.updateCombinedProfileCompletion(profile.id);
 
     await authRepository.createActivityLog(
       userId,
@@ -417,6 +389,8 @@ export class VendorService {
       data.documentNumber
     );
 
+    await this.updateCombinedProfileCompletion(profile.id);
+
     await authRepository.createActivityLog(
       userId,
       'VENDOR_DOCUMENT_UPLOAD',
@@ -447,6 +421,8 @@ export class VendorService {
     // Delete from database
     await vendorRepository.deleteDocument(documentId);
 
+    await this.updateCombinedProfileCompletion(profile.id);
+
     await authRepository.createActivityLog(
       userId,
       'VENDOR_DOCUMENT_DELETE',
@@ -470,6 +446,12 @@ export class VendorService {
       'Submitted vendor profile for compliance review',
       ip,
       userAgent
+    );
+
+    await notificationService.createNotification(
+      'Profile Submitted',
+      'Your vendor profile is completed and submitted for administrative review.',
+      userId
     );
 
     return updatedProfile;

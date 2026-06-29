@@ -30,6 +30,19 @@ export class VendorRepository {
     });
   }
 
+  async getProfileById(id: string) {
+    return prisma.vendorProfile.findUnique({
+      where: { id },
+    });
+  }
+
+  async updateProfileCompletion(id: string, profileCompletion: number) {
+    return prisma.vendorProfile.update({
+      where: { id },
+      data: { profileCompletion },
+    });
+  }
+
   async getServicesByVendorId(vendorProfileId: string) {
     return prisma.vendorService.findMany({
       where: { vendorProfileId },

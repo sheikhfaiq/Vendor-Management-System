@@ -17,15 +17,6 @@ describe('Individual Vendor Compliance Rules', () => {
   });
 
   describe('addService compliance rules', () => {
-    it('should throw an error if profile is not 100% complete', async () => {
-      const mockProfile = { id: 'v-123', profileCompletion: 80, status: 'APPROVED' };
-      (vendorRepository.getProfileByUserId as jest.Mock).mockResolvedValue(mockProfile);
-
-      await expect(
-        vendorService.addService('user-123', 'sub-123', ['INSTALLATION'])
-      ).rejects.toThrow(new AppError('Your profile must be 100% complete before registering services.', 403));
-    });
-
     it('should throw an error if profile status is not APPROVED', async () => {
       const mockProfile = { id: 'v-123', profileCompletion: 100, status: 'PENDING' };
       (vendorRepository.getProfileByUserId as jest.Mock).mockResolvedValue(mockProfile);
