@@ -42,6 +42,17 @@ export interface VendorProfile {
     role: string;
   };
   documents?: VendorDocument[];
+
+  // Custom Individual Vendor fields
+  assetName: string | null;
+  iqamaNumber: string | null;
+  expiryDate: string | null;
+  nationality: string | null;
+  bloodGroup: string | null;
+  gosiCertificateNo: string | null;
+  insurancePolicyNo: string | null;
+  iqamaProfession: string | null;
+  iqamaCompanyName: string | null;
 }
 
 export interface MainCategory {
@@ -101,5 +112,15 @@ export interface VendorDocument {
   fileSize: number;
   mimeType: string;
   uploadedAt: string;
+}
+
+export interface Notification {
+  id: string;
+  userId?: string | null;
+  role?: 'ADMIN' | 'VENDOR' | null;
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
 }
 

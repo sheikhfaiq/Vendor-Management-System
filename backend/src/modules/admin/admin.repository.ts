@@ -30,10 +30,12 @@ export class AdminRepository {
     };
   }
 
-  async listVendors(skip: number, limit: number) {
+  async listVendors(skip: number, limit: number, status?: string) {
+    const where = status ? { status: status as any } : undefined;
     return prisma.vendorProfile.findMany({
       skip,
       take: limit,
+      where,
       include: {
         user: {
           select: {
@@ -52,8 +54,9 @@ export class AdminRepository {
     });
   }
 
-  async countVendors() {
-    return prisma.vendorProfile.count();
+  async countVendors(status?: string) {
+    const where = status ? { status: status as any } : undefined;
+    return prisma.vendorProfile.count({ where });
   }
 
   async getVendorById(id: string) {
@@ -280,19 +283,14 @@ export class AdminRepository {
       throw new Error('Vendor profile not found');
     }
 
+    if (data.expiryDate) {
+      data.expiryDate = new Date(data.expiryDate);
+    }
+
     const merged = { ...existing, ...data };
     
     const profileCompletion = calculateProfileCompletion({
-      vendorType: merged.vendorType,
-      ownerName: merged.ownerName,
-      phone: merged.phone,
-      address: merged.address,
-      region: merged.region,
-      city: merged.city,
-      country: merged.country,
-      companyName: merged.companyName,
-      tradeLicenseNo: merged.tradeLicenseNo,
-      taxRegistrationNo: merged.taxRegistrationNo,
+      ...merged,
       serviceCount: existing.services.length,
     });
 

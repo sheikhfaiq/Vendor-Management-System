@@ -11,6 +11,7 @@ import authRoutes from './modules/auth/auth.routes';
 import serviceRoutes from './modules/service/service.routes';
 import vendorRoutes from './modules/vendor/vendor.routes';
 import adminRoutes from './modules/admin/admin.routes';
+import notificationRoutes from './modules/notification/notification.routes';
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use('/auth', authRoutes);
 app.use('/services', serviceRoutes);
 app.use('/vendors', vendorRoutes);
 app.use('/admin', adminRoutes);
+app.use('/notifications', notificationRoutes);
 
 // Global centralized error handler
 app.use(errorHandler as any);

@@ -13,6 +13,17 @@ export const updateProfileSchema = z.object({
   region: z.string().min(2, 'Region must be at least 2 characters').optional().or(z.null()),
   country: z.string().min(2, 'Country must be at least 2 characters').optional(),
   businessCategory: z.string().optional(),
+  
+  // Custom Individual Vendor fields
+  assetName: z.string().optional().or(z.null()),
+  iqamaNumber: z.string().optional().or(z.null()),
+  expiryDate: z.string().optional().or(z.null()),
+  nationality: z.string().optional().or(z.null()),
+  bloodGroup: z.string().optional().or(z.null()),
+  gosiCertificateNo: z.string().optional().or(z.null()),
+  insurancePolicyNo: z.string().optional().or(z.null()),
+  iqamaProfession: z.string().optional().or(z.null()),
+  iqamaCompanyName: z.string().optional().or(z.null()),
 });
 
 export const addVendorServiceSchema = z.object({

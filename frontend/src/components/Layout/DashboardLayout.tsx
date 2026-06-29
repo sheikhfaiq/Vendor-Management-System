@@ -1,6 +1,9 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router';
 import { useAuth } from '../../features/auth/context/AuthContext';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { adminApi } from '../../api/adminApi';
+import { notificationApi } from '../../api/notificationApi';
 import {
   LayoutDashboard,
   Building2,
@@ -16,6 +19,10 @@ import {
   Shield,
   FileText,
   FolderOpen,
+  Bell,
+  Trash2,
+  CheckCheck,
+  ShieldCheck,
 } from 'lucide-react';
 
 interface SidebarItem {
@@ -30,6 +37,20 @@ const DashboardLayoutComponent: React.FC = () => {
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setIsNotificationOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLogout = useCallback(() => {
     logout();
@@ -50,6 +71,37 @@ const DashboardLayoutComponent: React.FC = () => {
 
   const role = user?.role || 'VENDOR';
 
+  // Stats query for admin approvals badge count
+  const { data: adminStats } = useQuery({
+    queryKey: ['adminDashboardStats'],
+    queryFn: adminApi.getDashboard,
+    enabled: role === 'ADMIN',
+    refetchInterval: 5000, // Live updates every 5 seconds
+  });
+
+  // Notifications query
+  const { data: notifications = [] } = useQuery({
+    queryKey: ['notifications'],
+    queryFn: notificationApi.getNotifications,
+    refetchInterval: 5000, // Live notification updates
+  });
+
+  const markReadMutation = useMutation({
+    mutationFn: notificationApi.markAllAsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+
+  const clearAllMutation = useMutation({
+    mutationFn: notificationApi.clearAllNotifications,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+
+  const unreadCount = useMemo(() => notifications.filter((n) => !n.read).length, [notifications]);
+
   // Memoize sidebar items depending on role
   const sidebarItems = useMemo<SidebarItem[]>(() => {
     if (role === 'ADMIN') {
@@ -58,6 +110,11 @@ const DashboardLayoutComponent: React.FC = () => {
           label: 'Dashboard',
           path: '/admin/dashboard',
           icon: <LayoutDashboard className="h-5 w-5 shrink-0" />,
+        },
+        {
+          label: 'Pending Approvals',
+          path: '/admin/approvals',
+          icon: <ShieldCheck className="h-5 w-5 shrink-0 text-amber-550" />,
         },
         {
           label: 'Vendors Database',
@@ -114,12 +171,13 @@ const DashboardLayoutComponent: React.FC = () => {
   const renderSidebarItem = useCallback(
     (item: SidebarItem) => {
       const isActive = location.pathname === item.path;
+      const showBadge = item.label === 'Pending Approvals' && adminStats?.pendingVendors && adminStats.pendingVendors > 0;
       return (
         <Link
           key={item.path}
           to={item.path}
           onClick={closeMobile}
-          className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-150 select-none ${
+          className={`flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-150 select-none relative ${
             isActive
               ? 'bg-primary text-white shadow-sm'
               : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -127,10 +185,18 @@ const DashboardLayoutComponent: React.FC = () => {
         >
           {item.icon}
           {!isCollapsed && <span className="truncate">{item.label}</span>}
+          {!isCollapsed && showBadge && (
+            <span className="ml-auto bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
+              {adminStats.pendingVendors}
+            </span>
+          )}
+          {isCollapsed && showBadge && (
+            <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-red-500 border-2 border-white animate-pulse" />
+          )}
         </Link>
       );
     },
-    [location.pathname, isCollapsed, closeMobile]
+    [location.pathname, isCollapsed, closeMobile, adminStats]
   );
 
   return (
@@ -271,6 +337,95 @@ const DashboardLayoutComponent: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            {/* Notification Bell Dropdown */}
+            <div className="relative" ref={notificationRef}>
+              <button
+                onClick={() => setIsNotificationOpen((prev) => !prev)}
+                className="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-55/60 rounded-xl transition-all cursor-pointer border border-transparent hover:border-slate-100"
+                aria-label="Notifications"
+              >
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1 right-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white animate-pulse" />
+                )}
+              </button>
+
+              {isNotificationOpen && (
+                <div className="absolute right-0 mt-2.5 w-80 bg-white rounded-2xl shadow-xl border border-slate-100 z-50 overflow-hidden">
+                  {/* Dropdown Header */}
+                  <div className="px-4 py-3.5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-xs text-slate-800">Notifications</span>
+                      {unreadCount > 0 && (
+                        <span className="bg-primary/10 text-primary text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                          {unreadCount} new
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={() => markReadMutation.mutate()}
+                          className="text-[10px] font-bold text-primary hover:text-primary-focus transition-colors cursor-pointer flex items-center gap-0.5"
+                          title="Mark all as read"
+                        >
+                          <CheckCheck className="h-3.5 w-3.5" />
+                          Mark read
+                        </button>
+                      )}
+                      {notifications.length > 0 && (
+                        <button
+                          onClick={() => clearAllMutation.mutate()}
+                          className="text-[10px] font-bold text-red-650 hover:text-red-850 transition-colors cursor-pointer flex items-center gap-0.5"
+                          title="Clear all notifications"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Clear all
+                        </button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Dropdown List */}
+                  <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                    {notifications.length === 0 ? (
+                      <div className="px-4 py-8 text-center flex flex-col items-center justify-center gap-2">
+                        <Bell className="h-6 w-6 text-slate-300 stroke-1" />
+                        <p className="text-xxs text-slate-400 font-medium">No notifications yet.</p>
+                      </div>
+                    ) : (
+                      notifications.map((notif) => (
+                        <div
+                          key={notif.id}
+                          className={`px-4 py-3 hover:bg-slate-50/50 transition-colors flex items-start gap-2.5 relative ${
+                            !notif.read ? 'bg-primary/[0.02]' : ''
+                          }`}
+                        >
+                          {!notif.read && (
+                            <span className="absolute left-1.5 top-4 h-1.5 w-1.5 rounded-full bg-primary" />
+                          )}
+                          <div className="flex-1 min-w-0 pl-1.5">
+                            <p className="text-xs font-bold text-slate-800 leading-tight">
+                              {notif.title}
+                            </p>
+                            <p className="text-xxs text-slate-550 mt-0.5 leading-relaxed font-medium break-words">
+                              {notif.message}
+                            </p>
+                            <span className="text-[9px] text-slate-400 font-medium mt-1 inline-block">
+                              {new Date(notif.createdAt).toLocaleTimeString(undefined, {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="text-right hidden sm:block">
               <p className="text-xs font-bold text-slate-800">{user?.email}</p>
               <p className="text-xxs text-slate-400 capitalize font-medium">

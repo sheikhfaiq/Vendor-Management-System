@@ -9,15 +9,83 @@ import { Checkbox } from '../../../components/Checkbox/Checkbox';
 import { Card } from '../../../components/Card/Card';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
-import { Plus, ChevronRight, FolderOpen, Layers, X } from 'lucide-react';
+import { Plus, ChevronRight, FolderOpen, Layers, X, Pencil, Trash2, Lock, AlertCircle, ArrowRight, ShieldAlert } from 'lucide-react';
+import { Link } from 'react-router';
 import type { ScopeOfWork, MainCategory, Category, SubCategory } from '../../../types';
-
 const ALL_SCOPES: { value: ScopeOfWork; label: string }[] = [
   { value: 'DESIGN_ENGINEERING', label: 'Design & Engineering' },
   { value: 'SUPPLY', label: 'Supply' },
   { value: 'INSTALLATION', label: 'Installation' },
   { value: 'TESTING_COMMISSIONING', label: 'Testing & Commissioning' },
 ];
+
+const PROFESSION_MAIN_CATEGORIES: Record<string, string[]> = {
+  ENGINEER: [
+    'Civil Works',
+    'Structural Steel Works',
+    'MEP',
+    'Building Envelope',
+    'Infrastructure Works',
+    'Temporary Works',
+    'Finishing Works (Civil Scope)',
+    'Specialized Systems by Project Type'
+  ],
+  SUPERVISOR: [
+    'Civil Works',
+    'Structural Steel Works',
+    'MEP',
+    'Building Envelope',
+    'Infrastructure Works',
+    'Temporary Works',
+    'Finishing Works (Civil Scope)',
+    'Specialized Systems by Project Type'
+  ],
+  FOREMAN: [
+    'Civil Works',
+    'Structural Steel Works',
+    'MEP',
+    'Building Envelope',
+    'Temporary Works',
+    'Finishing Works (Civil Scope)'
+  ],
+  TECHNICIAN: [
+    'Structural Steel Works',
+    'MEP',
+    'Building Envelope',
+    'Temporary Works',
+    'Finishing Works (Civil Scope)'
+  ],
+  LABOUR: [
+    'Temporary Works',
+    'Finishing Works (Civil Scope)'
+  ]
+};
+
+const getPermittedMainCategories = (profession: string | null | undefined): string[] => {
+  if (!profession) return PROFESSION_MAIN_CATEGORIES.LABOUR;
+  const norm = profession.toUpperCase().trim();
+  if (norm.includes('ENGINEER')) return PROFESSION_MAIN_CATEGORIES.ENGINEER;
+  if (norm.includes('SUPERVISOR')) return PROFESSION_MAIN_CATEGORIES.SUPERVISOR;
+  if (norm.includes('FOREMAN') || norm.includes('FORMAN')) return PROFESSION_MAIN_CATEGORIES.FOREMAN;
+  if (norm.includes('TECHNICIAN')) return PROFESSION_MAIN_CATEGORIES.TECHNICIAN;
+  if (norm.includes('LABOUR') || norm.includes('LABOR')) return PROFESSION_MAIN_CATEGORIES.LABOUR;
+  return PROFESSION_MAIN_CATEGORIES.LABOUR;
+};
+
+const getPermittedScopes = (profession: string | null | undefined): string[] => {
+  if (!profession) return ['INSTALLATION'];
+  const norm = profession.toUpperCase().trim();
+  if (norm.includes('ENGINEER')) {
+    return ['DESIGN_ENGINEERING', 'SUPPLY', 'INSTALLATION', 'TESTING_COMMISSIONING'];
+  }
+  if (norm.includes('SUPERVISOR')) {
+    return ['SUPPLY', 'INSTALLATION', 'TESTING_COMMISSIONING'];
+  }
+  if (norm.includes('FOREMAN') || norm.includes('FORMAN') || norm.includes('TECHNICIAN')) {
+    return ['INSTALLATION', 'TESTING_COMMISSIONING'];
+  }
+  return ['INSTALLATION'];
+};
 
 // Pending item to be added in bulk
 interface PendingService {
@@ -52,6 +120,18 @@ const MyServicesComponent: React.FC = () => {
 
   // =================== API QUERIES ===================
 
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ['vendorProfile'],
+    queryFn: vendorApi.getProfile,
+    refetchInterval: 5000, // Poll profile status every 5 seconds
+  });
+
+  const { isLoading: isLoadingCompletion } = useQuery({
+    queryKey: ['vendorProfileCompletion'],
+    queryFn: vendorApi.getProfileCompletion,
+    refetchInterval: 5000, // Poll completion details
+  });
+
   const { data: myServices = [], isLoading: isLoadingServices } = useQuery({
     queryKey: ['myServices'],
     queryFn: vendorApi.getServices,
@@ -76,6 +156,11 @@ const MyServicesComponent: React.FC = () => {
 
   const categories: Category[] = categoriesMap || [];
   const subCategories: SubCategory[] = subCategoriesMap || [];
+
+  const isLocked = useMemo(() => {
+    if (!profile) return true;
+    return profile.profileCompletion < 100 || profile.status !== 'APPROVED';
+  }, [profile]);
 
   // =================== MUTATIONS ===================
 
@@ -170,6 +255,17 @@ const MyServicesComponent: React.FC = () => {
   const addToPending = useCallback(
     (subCat: SubCategory) => {
       if (isAlreadyRegistered(subCat.id) || isPending(subCat.id)) return;
+      
+      const permitted = profile?.vendorType === 'INDIVIDUAL' 
+        ? getPermittedScopes(profile.businessCategory) 
+        : ['SUPPLY', 'INSTALLATION'];
+      
+      const defaultOptions = ['SUPPLY', 'INSTALLATION'];
+      let initialScopes = defaultOptions.filter(s => permitted.includes(s)) as ScopeOfWork[];
+      if (initialScopes.length === 0 && permitted.length > 0) {
+        initialScopes = [permitted[0] as ScopeOfWork];
+      }
+
       setPendingServices((prev) => [
         ...prev,
         {
@@ -177,11 +273,11 @@ const MyServicesComponent: React.FC = () => {
           subCategoryName: subCat.name,
           categoryName: expandedCatName,
           mainCategoryName: expandedMainCatName,
-          scopes: ['SUPPLY', 'INSTALLATION'] as ScopeOfWork[], // default scopes
+          scopes: initialScopes,
         },
       ]);
     },
-    [isAlreadyRegistered, isPending, expandedCatName, expandedMainCatName]
+    [isAlreadyRegistered, isPending, expandedCatName, expandedMainCatName, profile]
   );
 
   const removeFromPending = useCallback((subCatId: string) => {
@@ -232,10 +328,14 @@ const MyServicesComponent: React.FC = () => {
 
   // Edit modal handlers
   const openEditModal = useCallback((service: any) => {
+    if (isLocked) {
+      toastService.error('To update service trades, your onboarding profile must be 100% completed and approved by the compliance team.');
+      return;
+    }
     setEditingService(service);
     setEditScopes(service.scopes);
     setIsEditModalOpen(true);
-  }, []);
+  }, [isLocked]);
 
   const handleEditScopeChange = useCallback((scope: ScopeOfWork, checked: boolean) => {
     setEditScopes((prev) =>
@@ -255,9 +355,13 @@ const MyServicesComponent: React.FC = () => {
 
   // Delete handlers
   const openDeleteModal = useCallback((service: any) => {
+    if (isLocked) {
+      toastService.error('To remove service trades, your onboarding profile must be 100% completed and approved by the compliance team.');
+      return;
+    }
     setDeleteTarget(service);
     setIsDeleteModalOpen(true);
-  }, []);
+  }, [isLocked]);
 
   const confirmDelete = useCallback(() => {
     if (deleteTarget) {
@@ -300,16 +404,58 @@ const MyServicesComponent: React.FC = () => {
           </div>
         ),
       },
+      {
+        key: 'actions',
+        label: 'Actions',
+        render: (row: any) => (
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => openEditModal(row)}
+              className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer"
+              title="Edit Scopes"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => openDeleteModal(row)}
+              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+              title="Remove Trade"
+            >
+              <Trash2 className="h-4 w-4" />
+            </button>
+          </div>
+        ),
+      },
     ],
-    []
+    [openEditModal, openDeleteModal]
   );
 
+  const isIndividualMaxedOut = useMemo(() => {
+    if (!profile) return false;
+    return profile.vendorType === 'INDIVIDUAL' && myServices.length >= 2;
+  }, [profile, myServices.length]);
+
+  const filteredMainCategories = useMemo(() => {
+    if (!profile) return mainCategories;
+    if (profile.vendorType !== 'INDIVIDUAL') return mainCategories;
+    const permittedNames = getPermittedMainCategories(profile.businessCategory);
+    return mainCategories.filter((mc: any) => permittedNames.includes(mc.name));
+  }, [mainCategories, profile]);
+
   // =================== RENDER ===================
+
+  if (isLoadingProfile || isLoadingCompletion) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-800 tracking-tight">Registered Trades</h1>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -317,12 +463,53 @@ const MyServicesComponent: React.FC = () => {
           </p>
         </div>
         <Button
-          onClick={() => { setShowPicker(true); setPendingServices([]); }}
-          className="flex items-center gap-1.5 select-none"
+          onClick={() => {
+            if (isLocked) {
+              toastService.error('To register and manage construction trades, your onboarding profile must be 100% completed and approved by the compliance team.');
+              return;
+            }
+            setShowPicker(true);
+            setPendingServices([]);
+          }}
+          className="flex items-center gap-1.5 select-none shrink-0"
+          disabled={isIndividualMaxedOut}
         >
           <Plus className="h-4 w-4" /> Add Trades
         </Button>
       </div>
+
+      {isLocked && (
+        <div className="bg-amber-50 border border-amber-200/50 p-4 rounded-xl flex items-start gap-3">
+          <Lock className="h-5 w-5 text-amber-600 mt-0.5 shrink-0 animate-pulse" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-amber-800">Compliance Verification Pending</p>
+            <p className="text-xxs text-amber-600 mt-0.5 leading-relaxed">
+              Your registered trades catalog is currently in a locked state. To unlock service registration, ensure your profile is <strong className="font-bold">100% complete</strong> (currently <strong className="font-bold">{profile?.profileCompletion ?? 0}%</strong>) and <strong className="font-bold">approved</strong> by the compliance team.
+            </p>
+            {profile && profile.profileCompletion < 100 && (
+              <Link
+                to="/vendor/profile-completion"
+                className="inline-flex items-center gap-1 text-xxs font-bold text-primary hover:text-primary-focus mt-2 transition-all"
+              >
+                Complete profile fields <ArrowRight className="h-3 w-3" />
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
+
+      {isIndividualMaxedOut && (
+        <div className="bg-amber-50 border border-amber-200/50 p-4 rounded-xl flex items-start gap-3">
+          <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-xs font-bold text-amber-800">Trade Limit Reached</p>
+            <p className="text-xxs text-amber-600 mt-0.5 leading-relaxed">
+              Individual contractor accounts are restricted to registering a maximum of <strong className="font-bold">2 trades</strong> under compliance rules. 
+              To register additional divisions and scopes of work, please contact support to upgrade your account type to Corporate.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ============ INLINE SERVICE PICKER PANEL ============ */}
       {showPicker && (
@@ -331,6 +518,15 @@ const MyServicesComponent: React.FC = () => {
           subtitle="Browse divisions → categories → trades, then add multiple at once"
         >
           <div className="flex flex-col gap-5">
+            {profile?.vendorType === 'INDIVIDUAL' && (
+              <div className="bg-amber-50/50 border border-amber-200/40 px-3 py-2 rounded-xl flex items-start gap-2.5">
+                <ShieldAlert className="h-4 w-4 text-amber-600 mt-0.5 shrink-0" />
+                <span className="text-xxs text-amber-800 font-semibold leading-relaxed">
+                  Compliance Notice: As an individual registered with role <strong className="font-bold">{profile.businessCategory || 'Labour'}</strong>, your available trade divisions are filtered automatically, and your scopes are restricted to: <strong className="font-bold">{getPermittedScopes(profile.businessCategory).map(s => s.replace(/_/g, ' ')).join(', ')}</strong>.
+                </span>
+              </div>
+            )}
+
             {/* Three-column cascading browser */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border border-slate-200 rounded-xl overflow-hidden min-h-[320px]">
 
@@ -340,7 +536,7 @@ const MyServicesComponent: React.FC = () => {
                   <p className="text-xxs font-bold text-slate-500 uppercase tracking-wider">Divisions</p>
                 </div>
                 <div className="flex-1 overflow-y-auto max-h-[320px]">
-                  {mainCategories.map((mc: MainCategory) => (
+                  {filteredMainCategories.map((mc: MainCategory) => (
                     <button
                       key={mc.id}
                       onClick={() => toggleMainCat(mc.id)}
@@ -357,7 +553,7 @@ const MyServicesComponent: React.FC = () => {
                       <ChevronRight className={`h-3.5 w-3.5 shrink-0 transition-transform ${expandedMainCat === mc.id ? 'rotate-90' : ''}`} />
                     </button>
                   ))}
-                  {mainCategories.length === 0 && (
+                  {filteredMainCategories.length === 0 && (
                     <p className="text-xxs text-slate-400 p-4 text-center">No divisions available</p>
                   )}
                 </div>
@@ -483,7 +679,11 @@ const MyServicesComponent: React.FC = () => {
 
                       {/* Scope checkboxes inline */}
                       <div className="flex flex-wrap items-center gap-3">
-                        {ALL_SCOPES.map((s) => (
+                        {ALL_SCOPES.filter(s => {
+                          if (profile?.vendorType !== 'INDIVIDUAL') return true;
+                          const permitted = getPermittedScopes(profile.businessCategory);
+                          return permitted.includes(s.value);
+                        }).map((s) => (
                           <Checkbox
                             key={s.value}
                             label={s.label}
@@ -571,7 +771,11 @@ const MyServicesComponent: React.FC = () => {
                 Scope of Work
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
-                {ALL_SCOPES.map((opt) => (
+                {ALL_SCOPES.filter(opt => {
+                  if (profile?.vendorType !== 'INDIVIDUAL') return true;
+                  const permitted = getPermittedScopes(profile.businessCategory);
+                  return permitted.includes(opt.value);
+                }).map((opt) => (
                   <Checkbox
                     key={opt.value}
                     label={opt.label}

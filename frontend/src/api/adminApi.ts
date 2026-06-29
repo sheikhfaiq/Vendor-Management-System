@@ -14,7 +14,7 @@ export const adminApi = {
     return res.data.data;
   },
 
-  async listVendors(params?: { page?: number; limit?: number }): Promise<{ data: VendorProfile[]; pagination: any }> {
+  async listVendors(params?: { page?: number; limit?: number; status?: string }): Promise<{ data: VendorProfile[]; pagination: any }> {
     const res = await axiosClient.get('/admin/vendors', { params });
     return res.data.data;
   },

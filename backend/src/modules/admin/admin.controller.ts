@@ -17,7 +17,8 @@ export class AdminController {
   async listVendors(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const params = getPaginationParams(req.query);
-      const result = await adminService.listVendors(params);
+      const status = req.query.status as string | undefined;
+      const result = await adminService.listVendors(params, status);
       sendSuccess(res, 'Vendors retrieved successfully', result);
     } catch (error) {
       next(error);

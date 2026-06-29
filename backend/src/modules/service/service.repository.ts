@@ -122,7 +122,16 @@ export class ServiceRepository {
   }
 
   async findSubCategoryById(id: string) {
-    return prisma.subCategory.findUnique({ where: { id } });
+    return prisma.subCategory.findUnique({
+      where: { id },
+      include: {
+        category: {
+          include: {
+            mainCategory: true,
+          },
+        },
+      },
+    });
   }
 }
 

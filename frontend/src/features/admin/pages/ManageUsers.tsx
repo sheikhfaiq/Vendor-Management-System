@@ -7,7 +7,6 @@ import {
   Shield,
   User as UserIcon,
 } from 'lucide-react';
-import type { User } from '../../../types';
 
 const ManageUsersComponent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);

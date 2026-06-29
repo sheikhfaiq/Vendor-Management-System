@@ -5,16 +5,17 @@ import { PaginationParams, formatPaginatedResult } from '../../utils/pagination'
 import { VendorStatus } from '@prisma/client';
 import prisma from '../../config/prisma';
 import { calculateProfileCompletion } from '../../utils/profileCompletion';
+import { notificationService } from '../notification/notification.service';
 
 export class AdminService {
   async getDashboardStats() {
     return adminRepository.getDashboardStats();
   }
 
-  async listVendors(params: PaginationParams) {
+  async listVendors(params: PaginationParams, status?: string) {
     const [vendors, total] = await Promise.all([
-      adminRepository.listVendors(params.skip, params.limit),
-      adminRepository.countVendors(),
+      adminRepository.listVendors(params.skip, params.limit, status),
+      adminRepository.countVendors(status),
     ]);
     return formatPaginatedResult(vendors, total, params);
   }
@@ -53,6 +54,20 @@ export class AdminService {
       ip,
       userAgent
     );
+
+    if (status === 'APPROVED') {
+      await notificationService.createNotification(
+        'Onboarding Approved',
+        'Your profile has been approved! You now have full access to select and register services.',
+        updatedVendor.userId
+      );
+    } else if (status === 'REJECTED') {
+      await notificationService.createNotification(
+        'Registration Rejected',
+        'Your onboarding application was rejected. Please review and correct your details.',
+        updatedVendor.userId
+      );
+    }
 
     return updatedVendor;
   }
@@ -152,16 +167,8 @@ export class AdminService {
     // Recalculate completion
     const newServiceCount = profile.services.length + 1;
     const profileCompletion = calculateProfileCompletion({
+      ...profile,
       vendorType: profile.vendorType as any,
-      ownerName: profile.ownerName,
-      phone: profile.phone,
-      address: profile.address,
-      region: profile.region,
-      city: profile.city,
-      country: profile.country,
-      companyName: profile.companyName,
-      tradeLicenseNo: profile.tradeLicenseNo,
-      taxRegistrationNo: profile.taxRegistrationNo,
       serviceCount: newServiceCount,
     });
 
@@ -251,16 +258,8 @@ export class AdminService {
     // Recalculate completion
     const newServiceCount = Math.max(0, profile.services.length - 1);
     const profileCompletion = calculateProfileCompletion({
+      ...profile,
       vendorType: profile.vendorType as any,
-      ownerName: profile.ownerName,
-      phone: profile.phone,
-      address: profile.address,
-      region: profile.region,
-      city: profile.city,
-      country: profile.country,
-      companyName: profile.companyName,
-      tradeLicenseNo: profile.tradeLicenseNo,
-      taxRegistrationNo: profile.taxRegistrationNo,
       serviceCount: newServiceCount,
     });
 

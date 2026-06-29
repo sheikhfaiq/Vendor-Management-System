@@ -268,7 +268,7 @@ const VendorListComponent: React.FC = () => {
           );
           return (
             <div className="flex flex-wrap gap-1 max-w-[250px]">
-              {uniqueScopes.map((scope: string) => (
+              {uniqueScopes.map((scope: any) => (
                 <span
                   key={scope}
                   className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-100/50"

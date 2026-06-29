@@ -65,6 +65,17 @@ model VendorProfile {
   updatedAt         DateTime        @updatedAt
   services          VendorService[]
   documents         VendorDocument[]
+  
+  // Custom Individual Vendor fields
+  assetName         String?
+  iqamaNumber       String?
+  expiryDate        DateTime?
+  nationality       String?
+  bloodGroup        String?
+  gosiCertificateNo String?
+  insurancePolicyNo String?
+  iqamaProfession   String?
+  iqamaCompanyName  String?
 }
 
 model MainCategory {
@@ -146,4 +157,14 @@ model VendorDocument {
   fileSize        Int
   mimeType        String
   uploadedAt      DateTime      @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String?
+  role      Role?
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

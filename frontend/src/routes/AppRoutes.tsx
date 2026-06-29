@@ -34,6 +34,7 @@ const ManageServices = lazy(() => import('../features/admin/pages/ManageServices
 const ManageUsers = lazy(() => import('../features/admin/pages/ManageUsers'));
 const VendorDocuments = lazy(() => import('../features/admin/pages/VendorDocuments'));
 const ActivityLogs = lazy(() => import('../features/admin/pages/ActivityLogs'));
+const VendorApprovals = lazy(() => import('../features/admin/pages/VendorApprovals'));
 
 const AppRoutes: React.FC = () => {
   return (
@@ -88,6 +89,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/vendors" element={<VendorList />} />
           <Route path="/admin/vendors/:id" element={<VendorDetails />} />
+          <Route path="/admin/approvals" element={<VendorApprovals />} />
           <Route path="/admin/services" element={<ManageServices />} />
           <Route path="/admin/users" element={<ManageUsers />} />
           <Route path="/admin/documents" element={<VendorDocuments />} />
