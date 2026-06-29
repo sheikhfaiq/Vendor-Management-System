@@ -19,6 +19,7 @@ const signupFormSchema = z
     vendorType: z.enum(['COMPANY', 'INDIVIDUAL']),
     companyName: z.string().min(2, 'Name must be at least 2 characters'),
     businessCategory: z.string().min(1, 'Vendor Role is required'),
+    country: z.string().min(2, 'Country must be at least 2 characters'),
   })
   .refine(
     (data) => {
@@ -55,6 +56,7 @@ const SignupComponent: React.FC = () => {
       vendorType: 'COMPANY',
       companyName: '',
       businessCategory: 'Contractor',
+      country: 'Saudi Arabia',
     }), []),
   });
 
@@ -90,7 +92,7 @@ const SignupComponent: React.FC = () => {
   );
 
   const vendorTypeOptions = useMemo(() => [
-    { value: 'COMPANY', label: 'Company / Contractor' },
+    { value: 'COMPANY', label: 'Company' },
     { value: 'INDIVIDUAL', label: 'Individual / Freelancer' },
   ], []);
 
@@ -171,13 +173,21 @@ const SignupComponent: React.FC = () => {
           />
         </div>
 
-        {/* Row 3: Vendor Role Dropdown */}
-        <div className="grid grid-cols-1 gap-3">
+        {/* Row 3: Vendor Role & Country */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Select
             {...register('businessCategory')}
             label="Vendor Role"
             options={categoryOptions}
             error={errors.businessCategory?.message}
+          />
+          <Select
+            {...register('country')}
+            label="Country"
+            options={[
+              { value: 'Saudi Arabia', label: 'Saudi Arabia (KSA)' },
+            ]}
+            error={errors.country?.message}
           />
         </div>
 

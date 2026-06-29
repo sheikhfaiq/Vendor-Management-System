@@ -150,7 +150,7 @@ const DashboardLayoutComponent: React.FC = () => {
           icon: <LayoutDashboard className="h-5 w-5 shrink-0" />,
         },
         {
-          label: 'Complete Profile',
+          label: user?.vendorProfile?.isSubmitted ? 'View Profile' : 'Complete Profile',
           path: '/vendor/profile-completion',
           icon: <UserIcon className="h-5 w-5 shrink-0" />,
         },

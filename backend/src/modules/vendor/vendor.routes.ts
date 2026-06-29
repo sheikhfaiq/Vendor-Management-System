@@ -30,5 +30,6 @@ router.post('/documents/upload-url', vendorController.generateUploadUrl as any);
 router.post('/documents/confirm', vendorController.confirmUpload as any);
 router.delete('/documents/:id', vendorController.deleteDocument as any);
 router.put('/documents/local-upload-mock', vendorController.localUploadMock as any);
+router.post('/profile/submit', vendorController.submitProfile as any);
 
 export default router;

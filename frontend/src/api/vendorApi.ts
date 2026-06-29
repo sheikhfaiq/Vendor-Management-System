@@ -38,6 +38,7 @@ export const vendorApi = {
       companyName: string | null;
       vendorType: 'COMPANY' | 'INDIVIDUAL';
       status: 'PENDING' | 'APPROVED' | 'REJECTED';
+      isSubmitted: boolean;
       profileCompletion: number;
     };
     serviceCount: number;
@@ -62,12 +63,16 @@ export const vendorApi = {
     return res.data.data;
   },
 
-  async confirmUpload(data: { name: string; fileKey: string; fileUrl: string; fileSize: number; mimeType: string }): Promise<VendorDocument> {
+  async confirmUpload(data: { name: string; documentNumber?: string; fileKey: string; fileUrl: string; fileSize: number; mimeType: string }): Promise<VendorDocument> {
     const res = await axiosClient.post('/vendors/documents/confirm', data);
     return res.data.data;
   },
 
   async deleteDocument(id: string): Promise<void> {
     await axiosClient.delete(`/vendors/documents/${id}`);
+  },
+
+  async submitProfile(): Promise<void> {
+    await axiosClient.post('/vendors/profile/submit');
   },
 };

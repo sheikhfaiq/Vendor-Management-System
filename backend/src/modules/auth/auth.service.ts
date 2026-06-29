@@ -23,7 +23,7 @@ export class AuthService {
       phone: null,
       address: null,
       city: null,
-      country: null,
+      country: data.country || null,
       companyName: data.companyName,
       tradeLicenseNo: null,
       taxRegistrationNo: null,
@@ -45,7 +45,7 @@ export class AuthService {
       website: null,
       address: null,
       city: null,
-      country: null,
+      country: data.country || null,
       businessCategory: data.businessCategory,
       profileCompletion: initialCompletion,
     };

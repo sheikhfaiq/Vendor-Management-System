@@ -90,10 +90,10 @@ export class AdminRepository {
     });
   }
 
-  async updateVendorStatus(id: string, status: VendorStatus) {
+  async updateVendorStatus(id: string, status: VendorStatus, extraData: any = {}) {
     return prisma.vendorProfile.update({
       where: { id },
-      data: { status },
+      data: { status, ...extraData },
       include: {
         user: {
           select: {

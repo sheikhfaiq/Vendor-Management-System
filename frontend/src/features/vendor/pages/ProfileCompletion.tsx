@@ -11,7 +11,7 @@ import { Card } from '../../../components/Card/Card';
 import { Loader } from '../../../components/Loader/Loader';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
-import { User, Phone, MapPin, Building, Globe, Calendar, CreditCard, Flag, FileText, Briefcase, Shield } from 'lucide-react';
+import { User, Phone, MapPin, Building, Globe, Calendar, CreditCard, Flag, FileText, Briefcase, Shield, Lock } from 'lucide-react';
 import { SAUDI_REGIONS, SAUDI_CITIES_BY_REGION } from '../../../constants/saudiGeography';
 import { SearchableSelect } from '../../../components/SearchableSelect/SearchableSelect';
 
@@ -176,7 +176,7 @@ const ProfileCompletionComponent: React.FC = () => {
       setValue('address', profile.address || '');
       setValue('region', profile.region || '');
       setValue('city', profile.city || '');
-      setValue('country', 'Saudi Arabia'); // Lock to Saudi Arabia
+      setValue('country', profile.country || 'Saudi Arabia');
       setValue('businessCategory', profile.businessCategory || '');
       setValue('assetName', profile.assetName || '');
       setValue('iqamaNumber', profile.iqamaNumber || '');
@@ -264,7 +264,7 @@ const ProfileCompletionComponent: React.FC = () => {
   );
 
   const vendorTypeOptions = useMemo(() => [
-    { value: 'COMPANY', label: 'Company / Contractor' },
+    { value: 'COMPANY', label: 'Company' },
     { value: 'INDIVIDUAL', label: 'Individual / Freelancer' },
   ], []);
 
@@ -318,17 +318,19 @@ const ProfileCompletionComponent: React.FC = () => {
   if (isLoading) return <Loader />;
 
   // Determine if fields have already been filled in the database profile
-  const isVendorTypeFilled = !!profile?.vendorType;
-  const isBusinessCategoryFilled = !!profile?.businessCategory;
-  const isOwnerNameFilled = !!profile?.ownerName;
-  const isCompanyNameFilled = !!profile?.companyName;
-  const isPhoneFilled = !!profile?.phone;
-  const isWebsiteFilled = !!profile?.website;
-  const isTradeLicenseNoFilled = !!profile?.tradeLicenseNo;
-  const isTaxRegistrationNoFilled = !!profile?.taxRegistrationNo;
-  const isRegionFilled = !!profile?.region;
-  const isCityFilled = !!profile?.city;
-  const isAddressFilled = !!profile?.address;
+  const isFormLocked = !!(profile?.isSubmitted && profile?.status !== 'APPROVED');
+
+  const isVendorTypeFilled = !!profile?.vendorType || isFormLocked;
+  const isBusinessCategoryFilled = !!profile?.businessCategory || isFormLocked;
+  const isOwnerNameFilled = !!profile?.ownerName || isFormLocked;
+  const isCompanyNameFilled = !!profile?.companyName || isFormLocked;
+  const isPhoneFilled = !!profile?.phone || isFormLocked;
+  const isWebsiteFilled = !!profile?.website || isFormLocked;
+  const isTradeLicenseNoFilled = !!profile?.tradeLicenseNo || isFormLocked;
+  const isTaxRegistrationNoFilled = !!profile?.taxRegistrationNo || isFormLocked;
+  const isRegionFilled = !!profile?.region || isFormLocked;
+  const isCityFilled = !!profile?.city || isFormLocked;
+  const isAddressFilled = !!profile?.address || isFormLocked;
 
   const isAssetFilled = !!profile?.assetName;
   const isIqamaNumberFilled = !!profile?.iqamaNumber;
@@ -566,18 +568,16 @@ const ProfileCompletionComponent: React.FC = () => {
                 error={errors.phone?.message}
                 icon={phoneIcon}
               />
-              {selectedVendorType === 'INDIVIDUAL' && (
-                <Input
-                  {...register('website')}
-                  type="text"
-                  label="Website"
-                  placeholder="https://freelancer.com"
-                  readOnly={isWebsiteFilled}
-                  className={isWebsiteFilled ? "bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200" : ""}
-                  error={errors.website?.message}
-                  icon={globeIcon}
-                />
-              )}
+              <Input
+                {...register('website')}
+                type="text"
+                label={selectedVendorType === 'INDIVIDUAL' ? 'Website' : 'Website Address'}
+                placeholder={selectedVendorType === 'INDIVIDUAL' ? 'https://freelancer.com' : 'https://company.com'}
+                readOnly={isWebsiteFilled}
+                className={isWebsiteFilled ? "bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200" : ""}
+                error={errors.website?.message}
+                icon={globeIcon}
+              />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -585,9 +585,11 @@ const ProfileCompletionComponent: React.FC = () => {
                 {...register('country')}
                 type="text"
                 label="Country *"
-                readOnly
-                className="bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200"
+                placeholder="Saudi Arabia"
+                readOnly={isFormLocked}
+                className={isFormLocked ? "bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200" : ""}
                 error={errors.country?.message}
+                icon={globeIcon}
               />
               <Controller
                 name="region"
@@ -637,13 +639,19 @@ const ProfileCompletionComponent: React.FC = () => {
 
           {/* Action button */}
           <div className="flex justify-end pt-2">
-            <Button
-              type="submit"
-              isLoading={mutation.isPending}
-              className="w-full md:w-auto px-8 py-3 text-sm font-semibold rounded-xl bg-primary hover:bg-primary-hover text-white shadow-sm"
-            >
-              Save Profile Information
-            </Button>
+            {!isFormLocked ? (
+              <Button
+                type="submit"
+                isLoading={mutation.isPending}
+                className="w-full md:w-auto px-8 py-3 text-sm font-semibold rounded-xl bg-primary hover:bg-primary-hover text-white shadow-sm"
+              >
+                Save Profile Information
+              </Button>
+            ) : (
+              <div className="flex items-center gap-1.5 text-amber-700 text-xs font-semibold bg-amber-50 border border-amber-100/50 p-3 rounded-xl select-none w-full md:w-auto">
+                <Lock className="h-4 w-4" /> Profile Locked - Under Compliance Review
+              </div>
+            )}
           </div>
         </form>
       </Card>

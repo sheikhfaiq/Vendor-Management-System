@@ -334,66 +334,7 @@ export const EditVendorModal: React.FC<EditVendorModalProps> = ({
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                {...register('phone')}
-                label="Phone Number"
-                placeholder="+966 50 123 4567"
-                error={errors.phone?.message}
-              />
-              <Input
-                {...register('website')}
-                label="Website Address"
-                placeholder="https://company.com"
-                error={errors.website?.message}
-              />
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                {...register('country')}
-                label="Country"
-                readOnly
-                className="bg-slate-50 text-slate-500 cursor-not-allowed border-slate-200"
-                error={errors.country?.message}
-              />
-              <Controller
-                name="region"
-                control={control}
-                render={({ field }) => (
-                  <SearchableSelect
-                    label="Saudi Region"
-                    placeholder="Select Region..."
-                    options={regionOptions}
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    error={errors.region?.message}
-                  />
-                )}
-              />
-              <Controller
-                name="city"
-                control={control}
-                render={({ field }) => (
-                  <SearchableSelect
-                    label="City"
-                    placeholder="Select City..."
-                    options={cityOptions}
-                    disabled={!selectedRegion}
-                    value={field.value || ''}
-                    onChange={field.onChange}
-                    error={errors.city?.message}
-                  />
-                )}
-              />
-            </div>
-
-            <Input
-              {...register('address')}
-              label="Detailed Address"
-              placeholder="District, Street name, Building No."
-              error={errors.address?.message}
-            />
           </>
         ) : (
           <div className="flex flex-col gap-5">
@@ -475,6 +416,65 @@ export const EditVendorModal: React.FC<EditVendorModalProps> = ({
           </div>
         )}
 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Input
+            {...register('phone')}
+            label="Phone Number"
+            placeholder="+966 50 123 4567"
+            error={errors.phone?.message}
+          />
+          <Input
+            {...register('website')}
+            label="Website Address"
+            placeholder="https://company.com"
+            error={errors.website?.message}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Input
+            {...register('country')}
+            label="Country *"
+            placeholder="Country"
+            error={errors.country?.message}
+          />
+          <Controller
+            name="region"
+            control={control}
+            render={({ field }) => (
+              <SearchableSelect
+                label="Saudi Region"
+                placeholder="Select Region..."
+                options={regionOptions}
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.region?.message}
+              />
+            )}
+          />
+          <Controller
+            name="city"
+            control={control}
+            render={({ field }) => (
+              <SearchableSelect
+                label="City"
+                placeholder="Select City..."
+                options={cityOptions}
+                disabled={!selectedRegion}
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.city?.message}
+              />
+            )}
+          />
+        </div>
+
+        <Input
+          {...register('address')}
+          label="Detailed Address"
+          placeholder="District, Street name, Building No."
+          error={errors.address?.message}
+        />
         <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
           <Button type="button" variant="secondary" onClick={onClose} disabled={isSaving}>
             Cancel

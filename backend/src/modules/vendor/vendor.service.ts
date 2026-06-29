@@ -84,11 +84,18 @@ export class VendorService {
     return profile;
   }
 
+  private checkLock(profile: any) {
+    if (profile.isSubmitted && profile.status !== 'APPROVED') {
+      throw new AppError('Action locked. Your profile is currently under review.', 403);
+    }
+  }
+
   async updateProfile(userId: string, data: any, ip?: string, userAgent?: string) {
     const profile = await vendorRepository.getProfileByUserId(userId);
     if (!profile) {
       throw new AppError('Vendor profile not found', 404);
     }
+    this.checkLock(profile);
 
     if (data.expiryDate) {
       data.expiryDate = new Date(data.expiryDate);
@@ -146,6 +153,7 @@ export class VendorService {
 
   async addService(userId: string, subCategoryId: string, scopes: ScopeOfWork[], ip?: string, userAgent?: string) {
     const profile = await this.getProfileByUserId(userId);
+    this.checkLock(profile);
 
     if (profile.profileCompletion < 100) {
       throw new AppError('Your profile must be 100% complete before registering services.', 403);
@@ -231,6 +239,7 @@ export class VendorService {
 
   async updateService(userId: string, id: string, scopes: ScopeOfWork[], ip?: string, userAgent?: string) {
     const profile = await this.getProfileByUserId(userId);
+    this.checkLock(profile);
 
     if (profile.profileCompletion < 100) {
       throw new AppError('Your profile must be 100% complete before updating services.', 403);
@@ -289,6 +298,7 @@ export class VendorService {
 
   async deleteService(userId: string, id: string, ip?: string, userAgent?: string) {
     const profile = await this.getProfileByUserId(userId);
+    this.checkLock(profile);
 
     const mapping = await vendorRepository.getVendorServiceById(id);
     if (!mapping) {
@@ -349,6 +359,7 @@ export class VendorService {
         companyName: profile.companyName,
         vendorType: profile.vendorType,
         status: profile.status,
+        isSubmitted: profile.isSubmitted,
         profileCompletion: profile.profileCompletion,
       },
       serviceCount,
@@ -389,11 +400,12 @@ export class VendorService {
 
   async confirmUpload(
     userId: string,
-    data: { name: string; fileKey: string; fileUrl: string; fileSize: number; mimeType: string },
+    data: { name: string; documentNumber?: string; fileKey: string; fileUrl: string; fileSize: number; mimeType: string },
     ip?: string,
     userAgent?: string
   ) {
     const profile = await this.getProfileByUserId(userId);
+    this.checkLock(profile);
     
     const document = await vendorRepository.addDocument(
       profile.id,
@@ -401,7 +413,8 @@ export class VendorService {
       data.fileKey,
       data.fileUrl,
       data.fileSize,
-      data.mimeType
+      data.mimeType,
+      data.documentNumber
     );
 
     await authRepository.createActivityLog(
@@ -417,6 +430,7 @@ export class VendorService {
 
   async deleteDocument(userId: string, documentId: string, ip?: string, userAgent?: string) {
     const profile = await this.getProfileByUserId(userId);
+    this.checkLock(profile);
     const document = await vendorRepository.getDocumentById(documentId);
 
     if (!document) {
@@ -440,6 +454,25 @@ export class VendorService {
       ip,
       userAgent
     );
+  }
+
+  async submitProfile(userId: string, ip?: string, userAgent?: string) {
+    const profile = await this.getProfileByUserId(userId);
+    
+    const updatedProfile = await vendorRepository.updateProfile(userId, {
+      isSubmitted: true,
+      status: 'PENDING',
+    });
+
+    await authRepository.createActivityLog(
+      userId,
+      'VENDOR_PROFILE_SUBMITTED',
+      'Submitted vendor profile for compliance review',
+      ip,
+      userAgent
+    );
+
+    return updatedProfile;
   }
 
   async saveLocalFile(fileKey: string, buffer: Buffer) {

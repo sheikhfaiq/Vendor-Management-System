@@ -342,6 +342,7 @@ const VendorDetailsComponent: React.FC = () => {
                   <thead>
                     <tr className="border-b border-slate-100 text-slate-400 font-semibold bg-slate-50/50">
                       <th className="py-2.5 px-3">Document Type</th>
+                      <th className="py-2.5 px-3">Document Number</th>
                       <th className="py-2.5 px-3">Filename</th>
                       <th className="py-2.5 px-3">Size</th>
                       <th className="py-2.5 px-3 text-right">Action</th>
@@ -357,6 +358,7 @@ const VendorDetailsComponent: React.FC = () => {
                       return (
                         <tr key={doc.id}>
                           <td className="py-3 px-3 font-semibold text-slate-800">{doc.name}</td>
+                          <td className="py-3 px-3 text-slate-650 font-bold">{doc.documentNumber || 'N/A'}</td>
                           <td className="py-3 px-3 text-slate-500 font-mono text-xxs max-w-[200px] truncate">{cleanName}</td>
                           <td className="py-3 px-3 text-slate-400">{kbs} KB</td>
                           <td className="py-3 px-3 text-right">

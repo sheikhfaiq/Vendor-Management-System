@@ -116,13 +116,13 @@ export class VendorController {
   async confirmUpload(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.userId;
-      const { name, fileKey, fileUrl, fileSize, mimeType } = req.body;
+      const { name, fileKey, fileUrl, fileSize, mimeType, documentNumber } = req.body;
       if (!name || !fileKey || !fileUrl || fileSize === undefined || !mimeType) {
         throw new AppError('Missing required document metadata fields', 400);
       }
       const document = await vendorService.confirmUpload(
         userId,
-        { name, fileKey, fileUrl, fileSize: Number(fileSize), mimeType },
+        { name, documentNumber, fileKey, fileUrl, fileSize: Number(fileSize), mimeType },
         req.ip,
         req.headers['user-agent'] as string
       );
@@ -167,6 +167,20 @@ export class VendorController {
           next(err);
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async submitProfile(req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.user!.userId;
+      const profile = await vendorService.submitProfile(
+        userId,
+        req.ip,
+        req.headers['user-agent'] as string
+      );
+      sendSuccess(res, 'Profile submitted for review successfully', profile);
     } catch (error) {
       next(error);
     }

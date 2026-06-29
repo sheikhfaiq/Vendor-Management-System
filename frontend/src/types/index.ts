@@ -33,6 +33,7 @@ export interface VendorProfile {
   country: string | null;
   businessCategory: string | null;
   status: VendorStatus;
+  isSubmitted: boolean;
   profileCompletion: number;
   createdAt: string;
   updatedAt: string;
@@ -107,6 +108,7 @@ export interface VendorDocument {
   id: string;
   vendorProfileId: string;
   name: string;
+  documentNumber?: string | null;
   fileKey: string;
   fileUrl: string;
   fileSize: number;

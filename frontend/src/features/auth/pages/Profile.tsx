@@ -80,7 +80,7 @@ const ProfileComponent: React.FC = () => {
               to="/vendor/profile-completion"
               className="text-xs font-semibold text-primary hover:text-primary-hover hover:underline"
             >
-              Edit Profile
+              {user.vendorProfile.isSubmitted ? 'View Profile' : 'Edit Profile'}
             </Link>
           }
         >

@@ -9,8 +9,7 @@ import { Checkbox } from '../../../components/Checkbox/Checkbox';
 import { Card } from '../../../components/Card/Card';
 import { toastService } from '../../../lib/notifications/toastService';
 import { logger } from '../../../lib/utils/logger';
-import { Plus, ChevronRight, FolderOpen, Layers, X, Pencil, Trash2, Lock, AlertCircle, ArrowRight, ShieldAlert } from 'lucide-react';
-import { Link } from 'react-router';
+import { Plus, ChevronRight, FolderOpen, Layers, X, Pencil, Trash2, Lock, AlertCircle, ShieldAlert } from 'lucide-react';
 import type { ScopeOfWork, MainCategory, Category, SubCategory } from '../../../types';
 const ALL_SCOPES: { value: ScopeOfWork; label: string }[] = [
   { value: 'DESIGN_ENGINEERING', label: 'Design & Engineering' },
@@ -142,6 +141,8 @@ const MyServicesComponent: React.FC = () => {
     queryFn: serviceApi.getMainCategories,
   });
 
+  const isLocked = !!(profile?.isSubmitted && profile?.status !== 'APPROVED');
+
   const { data: categoriesMap, isLoading: _loadingCats } = useQuery({
     queryKey: ['categories', expandedMainCat],
     queryFn: () => serviceApi.getCategories(expandedMainCat!),
@@ -157,10 +158,7 @@ const MyServicesComponent: React.FC = () => {
   const categories: Category[] = categoriesMap || [];
   const subCategories: SubCategory[] = subCategoriesMap || [];
 
-  const isLocked = useMemo(() => {
-    if (!profile) return true;
-    return profile.profileCompletion < 100 || profile.status !== 'APPROVED';
-  }, [profile]);
+
 
   // =================== MUTATIONS ===================
 
@@ -409,25 +407,33 @@ const MyServicesComponent: React.FC = () => {
         label: 'Actions',
         render: (row: any) => (
           <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => openEditModal(row)}
-              className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer"
-              title="Edit Scopes"
-            >
-              <Pencil className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => openDeleteModal(row)}
-              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-              title="Remove Trade"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
+            {!isLocked ? (
+              <>
+                <button
+                  onClick={() => openEditModal(row)}
+                  className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-colors cursor-pointer"
+                  title="Edit Scopes"
+                >
+                  <Pencil className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => openDeleteModal(row)}
+                  className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                  title="Remove Trade"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </>
+            ) : (
+              <span className="text-xxs text-slate-400 font-semibold italic flex items-center gap-1 px-1.5 py-1 bg-slate-50 border border-slate-100 rounded-lg">
+                <Lock className="h-3 w-3 text-slate-400" /> Locked
+              </span>
+            )}
           </div>
         ),
       },
     ],
-    [openEditModal, openDeleteModal]
+    [isLocked, openEditModal, openDeleteModal]
   );
 
   const isIndividualMaxedOut = useMemo(() => {
@@ -462,20 +468,22 @@ const MyServicesComponent: React.FC = () => {
             Add or update the construction divisions and scopes of work your business operates in
           </p>
         </div>
-        <Button
-          onClick={() => {
-            if (isLocked) {
-              toastService.error('To register and manage construction trades, your onboarding profile must be 100% completed and approved by the compliance team.');
-              return;
-            }
-            setShowPicker(true);
-            setPendingServices([]);
-          }}
-          className="flex items-center gap-1.5 select-none shrink-0"
-          disabled={isIndividualMaxedOut}
-        >
-          <Plus className="h-4 w-4" /> Add Trades
-        </Button>
+        {!isLocked ? (
+          <Button
+            onClick={() => {
+              setShowPicker(true);
+              setPendingServices([]);
+            }}
+            className="flex items-center gap-1.5 select-none shrink-0"
+            disabled={isIndividualMaxedOut}
+          >
+            <Plus className="h-4 w-4" /> Add Trades
+          </Button>
+        ) : (
+          <div className="flex items-center gap-1.5 text-amber-700 text-xs font-semibold bg-amber-50 border border-amber-100/50 p-2.5 rounded-xl select-none">
+            <Lock className="h-4 w-4" /> Trades Locked
+          </div>
+        )}
       </div>
 
       {isLocked && (
@@ -484,16 +492,8 @@ const MyServicesComponent: React.FC = () => {
           <div className="flex-1 min-w-0">
             <p className="text-xs font-bold text-amber-800">Compliance Verification Pending</p>
             <p className="text-xxs text-amber-600 mt-0.5 leading-relaxed">
-              Your registered trades catalog is currently in a locked state. To unlock service registration, ensure your profile is <strong className="font-bold">100% complete</strong> (currently <strong className="font-bold">{profile?.profileCompletion ?? 0}%</strong>) and <strong className="font-bold">approved</strong> by the compliance team.
+              Your registered trades catalog is currently in a locked state. Your onboarding profile has been submitted and is currently undergoing compliance review. All modifications are disabled.
             </p>
-            {profile && profile.profileCompletion < 100 && (
-              <Link
-                to="/vendor/profile-completion"
-                className="inline-flex items-center gap-1 text-xxs font-bold text-primary hover:text-primary-focus mt-2 transition-all"
-              >
-                Complete profile fields <ArrowRight className="h-3 w-3" />
-              </Link>
-            )}
           </div>
         </div>
       )}
@@ -512,7 +512,7 @@ const MyServicesComponent: React.FC = () => {
       )}
 
       {/* ============ INLINE SERVICE PICKER PANEL ============ */}
-      {showPicker && (
+      {showPicker && !isLocked && (
         <Card
           title="Select Service Trades"
           subtitle="Browse divisions → categories → trades, then add multiple at once"

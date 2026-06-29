@@ -17,6 +17,7 @@ export const signupSchema = z
       'Sub-Contractor',
       'Consultant',
     ]),
+    country: z.string().min(2, 'Country must be at least 2 characters').optional(),
   })
   .refine(
     (data) => {

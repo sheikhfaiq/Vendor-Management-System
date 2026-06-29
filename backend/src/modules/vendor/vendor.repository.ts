@@ -120,7 +120,8 @@ export class VendorRepository {
     fileKey: string,
     fileUrl: string,
     fileSize: number,
-    mimeType: string
+    mimeType: string,
+    documentNumber?: string
   ) {
     return prisma.vendorDocument.create({
       data: {
@@ -130,6 +131,7 @@ export class VendorRepository {
         fileUrl,
         fileSize,
         mimeType,
+        documentNumber,
       },
     });
   }

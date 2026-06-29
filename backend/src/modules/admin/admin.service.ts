@@ -45,7 +45,12 @@ export class AdminService {
       throw new AppError('Vendor not found', 404);
     }
 
-    const updatedVendor = await adminRepository.updateVendorStatus(vendorId, status);
+    const extraData: any = {};
+    if (status === 'REJECTED') {
+      extraData.isSubmitted = false;
+    }
+
+    const updatedVendor = await adminRepository.updateVendorStatus(vendorId, status, extraData);
 
     await authRepository.createActivityLog(
       adminId,
